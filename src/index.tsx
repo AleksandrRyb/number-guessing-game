@@ -1,17 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom";
+//Framework7 Bundle
+import Framework7 from "framework7/lite";
+import "framework7/framework7-bundle.css";
+
+//Framework7 React plugin
+import Framework7React from "framework7-react";
+
+//Components
+import App from "./App";
+
+//Init framework7 plugin
+Framework7.use(Framework7React);
 
 ReactDOM.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

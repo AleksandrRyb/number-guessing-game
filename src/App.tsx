@@ -1,22 +1,17 @@
 import React from "react";
 import { App, View } from "framework7-react";
 
-import { f7params } from "./routes";
+import { checkAuthRoutes } from "./routes";
 
 function MainApp() {
-  return <UnauthApp />;
-}
+  const [user, setUser] = React.useState(true);
+  const params = checkAuthRoutes(user);
 
-function UnauthApp() {
   return (
-    <App {...f7params}>
-      <View main url="/" />;
+    <App {...params}>
+      <View browserHistory main url="/" />
     </App>
   );
 }
-
-// function AuthApp() {
-//   return "Auth Pages";
-// }
 
 export default MainApp;

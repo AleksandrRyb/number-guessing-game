@@ -1,11 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
 //Framework7 Bundle
-import Framework7 from "framework7/lite";
-import "framework7/framework7-bundle.css";
+import Framework7 from "framework7/lite-bundle";
 
 //Framework7 React plugin
 import Framework7React from "framework7-react";
+
+//Styles
+import "framework7/framework7-bundle.css";
 
 //Components
 import App from "./App";

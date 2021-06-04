@@ -1,4 +1,3 @@
-
 //@ts-nocheck
 import React from "react";
 
@@ -8,18 +7,15 @@ import {
   Navbar,
   NavTitle,
   Page,
-  Button,
   PageContent,
   BlockTitle,
   List,
-  ListItem,
   Card,
   CardContent,
-  CardHeader,
-  CardFooter,
   Popover,
-  Input,
 } from "framework7-react";
+import PlayerMessage from "../components/PlayerMessage";
+import Player from "../components/Player";
 
 const players = [
   {
@@ -67,46 +63,6 @@ function GamePage() {
         </Popover>
       </div>
     </Page>
-  );
-}
-
-//Player view to game list
-function Player({ player }) {
-  return (
-    <ListItem className="display-block">
-      <Card style={{ width: "100%" }}>
-        <CardHeader>
-          <div style={{ margin: "0 auto" }}>{player.username}</div>
-        </CardHeader>
-        <CardContent>
-          <img
-            className="player-avatar"
-            src={player.avatar}
-            alt={`number guessing game player: ${player.username}`}
-          />
-        </CardContent>
-        <CardFooter>
-          <div style={{ margin: "0 auto" }}>guessed: {player.score}</div>
-        </CardFooter>
-      </Card>
-    </ListItem>
-  );
-}
-
-//Component for recieve game notifications
-function PlayerMessage() {
-  return (
-    <Card>
-      <CardContent className="text-align-center margin-bottom">
-        <BlockTitle medium>Guess the number</BlockTitle>
-        <Input
-          className="margin-bottom margin-top"
-          placeholder="enter the number"
-          type="number"
-        />
-        <Button text="submit" fill />
-      </CardContent>
-    </Card>
   );
 }
 

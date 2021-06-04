@@ -1,7 +1,6 @@
 import React from "react";
 
 import bluecard from "../assets/images/bluecard.png";
-
 import { Page, Block, BlockTitle, Button, PageContent } from "framework7-react";
 
 function LoginPage() {

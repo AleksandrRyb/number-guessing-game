@@ -1,4 +1,5 @@
 import React from "react";
+import { signInWithGoogle } from "../firebase/api/user.api";
 
 import bluecard from "../assets/images/bluecard.png";
 import { Page, Block, BlockTitle, Button, PageContent } from "framework7-react";
@@ -23,7 +24,11 @@ function LoginPage() {
             />
           </div>
           <div className="display-inline-block">
-            <Button fillMd text="Login with google" />
+            <Button
+              onClick={signInWithGoogle}
+              fillMd
+              text="Login with google"
+            />
           </div>
         </Block>
       </PageContent>

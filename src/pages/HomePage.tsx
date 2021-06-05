@@ -1,4 +1,5 @@
 import React from "react";
+import { logOut } from "../firebase/api/user.api";
 
 import {
   Button,
@@ -35,7 +36,12 @@ function HomePage() {
       <Navbar>
         <NavTitle>Number Guessing Game</NavTitle>
         <NavRight>
-          <Button text="Logout" fill className="margin-right" />
+          <Button
+            onClick={logOut}
+            text="Logout"
+            fill
+            className="margin-right"
+          />
         </NavRight>
       </Navbar>
       <PageContent className="text-align-center">

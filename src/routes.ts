@@ -1,10 +1,18 @@
-//@ts-nocheck
-
 import GamePage from "./pages/GamePage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 
-const authRoutes = [
+interface Route {
+  path: string;
+  component: () => JSX.Element;
+}
+interface Params {
+  id: string;
+  name: string;
+  routes: [] | Route[];
+}
+
+const authRoutes: Route[] = [
   {
     path: "/",
     component: HomePage,
@@ -15,14 +23,16 @@ const authRoutes = [
   },
 ];
 
-const unAuthRoutes = {
-  path: "/",
-  component: LoginPage,
-};
+const unAuthRoutes: Route[] = [
+  {
+    path: "/",
+    component: LoginPage,
+  },
+];
 
 export function checkAuthRoutes(user: any) {
   //default params
-  let params = {
+  let params: Params = {
     id: "com.numberguessinggame.",
     name: "Number Guessing Game",
     routes: [],
@@ -30,7 +40,7 @@ export function checkAuthRoutes(user: any) {
 
   //if user not authenticated we put only login route to routes
   if (!user) {
-    params.routes.push(unAuthRoutes);
+    params.routes = unAuthRoutes;
     return params;
   }
 

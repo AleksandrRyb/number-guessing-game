@@ -10,7 +10,7 @@ export interface SubscribeUser {
 export async function signInWithGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
   await auth.signInWithPopup(provider);
-  window.location.reload();
+  // window.location.reload();
 }
 
 export function checkAuth(callback: SubscribeUser) {
@@ -20,5 +20,5 @@ export function checkAuth(callback: SubscribeUser) {
 
 export async function logOut() {
   await auth.signOut();
-  window.location.reload();
+  // window.location.reload();
 }

@@ -31,7 +31,6 @@ const unAuthRoutes: Route[] = [
 ];
 
 export function checkAuthRoutes(user: any) {
-  //default params
   let params: Params = {
     id: "com.numberguessinggame.",
     name: "Number Guessing Game",

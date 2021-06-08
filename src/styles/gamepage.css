@@ -1,0 +1,12 @@
+.popover {
+  width: 500px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) !important;
+}
+
+.player-avatar {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+}

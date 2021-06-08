@@ -1,6 +1,7 @@
 import React from "react";
+import { useActions } from "../redux/hooks/use-action.hooks";
+import { logOut } from "../redux/action-creators/user.action-creators";
 
-//Components
 import {
   Button,
   Navbar,
@@ -31,12 +32,19 @@ const games = [
 ];
 
 function HomePage() {
+  const dispatch = useActions();
+
   return (
     <Page className="main">
       <Navbar>
         <NavTitle>Number Guessing Game</NavTitle>
         <NavRight>
-          <Button text="Logout" fill className="margin-right" />
+          <Button
+            onClick={() => dispatch(logOut())}
+            text="Logout"
+            fill
+            className="margin-right"
+          />
         </NavRight>
       </Navbar>
       <PageContent className="text-align-center">
@@ -88,7 +96,7 @@ function GameList() {
     <List>
       {games.map((game) => (
         <ListItem
-          link
+          link={`/${game.gameId}`}
           title={`Game owner: ${game.username}`}
           key={game.gameId}
           // onClick={change route func}

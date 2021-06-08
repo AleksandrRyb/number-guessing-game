@@ -1,10 +1,21 @@
 import React from "react";
-import { signInWithGoogle } from "../firebase/api/user.api";
+import { useActions } from "../redux/hooks/use-action.hooks";
+import { userLoginRequest } from "../redux/action-creators/user.action-creators";
+import { useTypedSelector } from "../redux/hooks/use-typed-selector.hooks";
 
 import bluecard from "../assets/images/bluecard.png";
 import { Page, Block, BlockTitle, Button, PageContent } from "framework7-react";
 
-function LoginPage() {
+function LoginPage({ f7router }: any) {
+  const { user } = useTypedSelector((state) => state.user);
+  const dispatch = useActions();
+
+  React.useEffect(() => {
+    if (user) {
+      f7router.navigate(`/home/${user.uid}`);
+    }
+  }, [user, f7router]);
+
   return (
     <Page className="login">
       <PageContent>
@@ -25,7 +36,7 @@ function LoginPage() {
           </div>
           <div className="display-inline-block">
             <Button
-              onClick={signInWithGoogle}
+              onClick={() => dispatch(userLoginRequest())}
               fillMd
               text="Login with google"
             />

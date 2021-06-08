@@ -1,20 +1,37 @@
-import { UserActionTypes } from "../action-types/user.action-types";
+import { UserActionTypes as types } from "../action-types/user.action-types";
 import firebase from "firebase";
 
 export interface UserLoginRequestAction {
-  type: UserActionTypes.USER_LOGIN_REQUEST;
+  type: types.USER_LOGIN_REQUEST;
 }
 
 export interface UserLoginSuccessAction {
-  type: UserActionTypes.USER_LOGIN_SUCCESS;
+  type: types.USER_LOGIN_SUCCESS;
   payload: firebase.User;
 }
 
 export interface UserLoginFailureAction {
-  type: UserActionTypes.USER_LOGIN_FAILURE;
+  type: types.USER_LOGIN_FAILURE;
 }
 
-export type Action =
+export interface UserListeningAction {
+  type: types.USER_LISTENING;
+  payload: firebase.User | null;
+}
+
+export interface SetUserAction {
+  type: types.SET_USER;
+  payload: firebase.User;
+}
+
+export interface LogOutAction {
+  type: types.LOG_OUT;
+}
+
+export type Actions =
   | UserLoginRequestAction
   | UserLoginSuccessAction
-  | UserLoginFailureAction;
+  | UserLoginFailureAction
+  | SetUserAction
+  | UserListeningAction
+  | LogOutAction;

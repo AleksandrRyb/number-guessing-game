@@ -1,5 +1,6 @@
 import React from "react";
-import { logOut } from "../firebase/api/user.api";
+import { useActions } from "../redux/hooks/use-action.hooks";
+import { logOut } from "../redux/action-creators/user.action-creators";
 
 import {
   Button,
@@ -31,13 +32,15 @@ const games = [
 ];
 
 function HomePage() {
+  const dispatch = useActions();
+
   return (
     <Page className="main">
       <Navbar>
         <NavTitle>Number Guessing Game</NavTitle>
         <NavRight>
           <Button
-            onClick={logOut}
+            onClick={() => dispatch(logOut())}
             text="Logout"
             fill
             className="margin-right"

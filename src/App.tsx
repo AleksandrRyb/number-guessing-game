@@ -1,23 +1,28 @@
 import React from "react";
-import firebase from "firebase/app";
+import { f7 } from "framework7-react";
+import { useTypedSelector } from "./redux/hooks/use-typed-selector.hooks";
+import { useActions } from "./redux/hooks/use-action.hooks";
+import { userListening } from "./redux/action-creators/user.action-creators";
 import { checkAuth } from "./firebase/api/user.api";
-import { checkAuthRoutes } from "./routes";
 
 import { App, View, Preloader } from "framework7-react";
+import { params } from "./routes";
 
 function MainApp() {
-  const [user, setUser] = React.useState<firebase.User | null>(null);
-  const [loading, setLoading] = React.useState(true);
-  const params = checkAuthRoutes(user);
+  const dispatch = useActions();
+  const { loading, user } = useTypedSelector((state) => state.user);
 
   React.useEffect(() => {
-    return checkAuth((user: firebase.User | null) => {
-      setUser(user);
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000);
+    return checkAuth((user) => {
+      dispatch(userListening(user));
     });
   }, []);
+
+  React.useEffect(() => {
+    if (!user) {
+      f7.views.main.router.navigate("/login");
+    }
+  }, [user]);
 
   if (loading) {
     return (
@@ -27,7 +32,7 @@ function MainApp() {
 
   return (
     <App {...params}>
-      <View browserHistorySeparator="" browserHistory main url="/" />
+      <View browserHistorySeparator="" browserHistory main url="/login" />
     </App>
   );
 }

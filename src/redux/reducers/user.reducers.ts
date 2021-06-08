@@ -1,12 +1,11 @@
-import { UserActionTypes } from "../action-types/user.action-types";
-import { Action } from "../actions/user.actions";
+import { UserActionTypes as types } from "../action-types/user.action-types";
+import { Actions } from "../actions/user.actions";
 import firebase from "firebase";
 
 interface UserState {
   loading: boolean;
   user: firebase.User | null;
   failureLogin?: string;
-  successLogin?: string;
 }
 
 const initialState: UserState = {
@@ -14,24 +13,41 @@ const initialState: UserState = {
   user: null,
 };
 
-function userReducer(state: UserState = initialState, action: Action) {
+function userReducer(state: UserState = initialState, action: Actions) {
   switch (action.type) {
-    case UserActionTypes.USER_LOGIN_REQUEST:
+    case types.USER_LOGIN_REQUEST:
       return {
         ...state,
         loading: true,
       };
-    case UserActionTypes.USER_LOGIN_SUCCESS:
+    case types.USER_LOGIN_SUCCESS:
       return {
         ...state,
         loading: false,
         user: action.payload,
       };
-    case UserActionTypes.USER_LOGIN_FAILURE:
+    case types.USER_LOGIN_FAILURE:
       return {
         ...state,
         loading: false,
       };
+    case types.USER_LISTENING:
+      return {
+        ...state,
+        loading: true,
+      };
+    case types.SET_USER:
+      return {
+        ...state,
+        loading: false,
+        user: action.payload,
+      };
+    case types.LOG_OUT:
+      return {
+        ...state,
+        user: null,
+      };
+
     default:
       return state;
   }

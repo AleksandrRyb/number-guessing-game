@@ -1,7 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
-import { f7 } from "framework7-react";
-import { useTypedSelector } from "./redux/hooks/use-typed-selector.hooks";
-import { useActions } from "./redux/hooks/use-action.hooks";
+import { useTypedSelector } from "./hooks/use-typed-selector.hooks";
+import { useActions } from "./hooks/use-action.hooks";
 import { userListening } from "./redux/action-creators/user.action-creators";
 import { checkAuth } from "./firebase/api/user.api";
 
@@ -10,21 +10,19 @@ import { params } from "./routes";
 
 function MainApp() {
   const dispatch = useActions();
-  const { loading, user } = useTypedSelector((state) => state.user);
+  const { isFetching, user, userLoginRequest } = useTypedSelector(
+    (state) => state.user
+  );
 
   React.useEffect(() => {
     return checkAuth((user) => {
-      dispatch(userListening(user));
+      if (!userLoginRequest) {
+        dispatch(userListening(user));
+      }
     });
-  }, []);
+  }, [userLoginRequest]);
 
-  React.useEffect(() => {
-    if (!user) {
-      f7.views.main.router.navigate("/login");
-    }
-  }, [user]);
-
-  if (loading) {
+  if (isFetching) {
     return (
       <Preloader size={70} color="blue" style={{ margin: "50vh, auto" }} />
     );

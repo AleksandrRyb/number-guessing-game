@@ -1,7 +1,7 @@
 import React from "react";
-import { useActions } from "../redux/hooks/use-action.hooks";
+import { useActions } from "../hooks/use-action.hooks";
 import { userLoginRequest } from "../redux/action-creators/user.action-creators";
-import { useTypedSelector } from "../redux/hooks/use-typed-selector.hooks";
+import { useTypedSelector } from "../hooks/use-typed-selector.hooks";
 
 import bluecard from "../assets/images/bluecard.png";
 import { Page, Block, BlockTitle, Button, PageContent } from "framework7-react";
@@ -14,7 +14,7 @@ function LoginPage({ f7router }: any) {
     if (user) {
       f7router.navigate(`/home/${user.uid}`);
     }
-  }, [user, f7router]);
+  }, [user, dispatch]);
 
   return (
     <Page className="login">

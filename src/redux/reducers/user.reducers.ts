@@ -3,14 +3,15 @@ import { Actions } from "../actions/user.actions";
 import firebase from "firebase";
 
 interface UserState {
-  loading: boolean;
+  isFetching: boolean;
   user: firebase.User | null;
-  failureLogin?: string;
+  userLoginRequest: boolean;
 }
 
 const initialState: UserState = {
-  loading: false,
+  isFetching: false,
   user: null,
+  userLoginRequest: false,
 };
 
 function userReducer(state: UserState = initialState, action: Actions) {
@@ -18,28 +19,31 @@ function userReducer(state: UserState = initialState, action: Actions) {
     case types.USER_LOGIN_REQUEST:
       return {
         ...state,
-        loading: true,
+        userLoginRequest: true,
+        isFetching: true,
       };
     case types.USER_LOGIN_SUCCESS:
       return {
         ...state,
-        loading: false,
+        userLoginRequest: true,
+        isFetching: false,
         user: action.payload,
       };
     case types.USER_LOGIN_FAILURE:
       return {
         ...state,
-        loading: false,
+        userLoginRequest: true,
+        isFetching: false,
       };
     case types.USER_LISTENING:
       return {
         ...state,
-        loading: true,
+        isFetching: true,
       };
     case types.SET_USER:
       return {
         ...state,
-        loading: false,
+        isFetching: false,
         user: action.payload,
       };
     case types.LOG_OUT:

@@ -7,7 +7,7 @@ export const params = {
   name: "Number Guessing Game",
   routes: [
     {
-      path: "/home/:userId",
+      path: "/",
       component: HomePage,
     },
     {

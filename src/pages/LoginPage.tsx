@@ -4,17 +4,30 @@ import { userLoginRequest } from "../redux/action-creators/user.action-creators"
 import { useTypedSelector } from "../hooks/use-typed-selector.hooks";
 
 import bluecard from "../assets/images/bluecard.png";
-import { Page, Block, BlockTitle, Button, PageContent } from "framework7-react";
+import {
+  Page,
+  Block,
+  BlockTitle,
+  Button,
+  PageContent,
+  Preloader,
+} from "framework7-react";
 
 function LoginPage({ f7router }: any) {
-  const { user } = useTypedSelector((state) => state.user);
+  const { user, isFetching } = useTypedSelector((state) => state.user);
   const dispatch = useActions();
 
   React.useEffect(() => {
-    if (user) {
-      f7router.navigate(`/home/${user.uid}`);
+    if (user && !isFetching) {
+      f7router.navigate("/");
     }
-  }, [user, dispatch]);
+  }, [dispatch]);
+
+  if (isFetching || user) {
+    return (
+      <Preloader size={70} color="blue" style={{ margin: "50vh, auto" }} />
+    );
+  }
 
   return (
     <Page className="login">

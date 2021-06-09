@@ -19,13 +19,17 @@ import {
 
 function HomePage({ f7router }: any) {
   const dispatch = useActions();
-  const { user } = useTypedSelector((state) => state.user);
+  const { user, isFetching } = useTypedSelector((state) => state.user);
 
   React.useEffect(() => {
-    if (!user) {
+    if (!user && !isFetching) {
       f7router.navigate("/login");
     }
-  }, [user]);
+  }, []);
+
+  if (isFetching) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Page className="main">

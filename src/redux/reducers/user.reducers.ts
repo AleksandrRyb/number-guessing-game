@@ -9,7 +9,7 @@ interface UserState {
 }
 
 const initialState: UserState = {
-  isFetching: false,
+  isFetching: true,
   user: null,
   userLoginRequest: false,
 };

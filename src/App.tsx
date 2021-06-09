@@ -20,7 +20,7 @@ function MainApp() {
         dispatch(userListening(user));
       }
     });
-  }, [userLoginRequest]);
+  }, []);
 
   if (isFetching) {
     return (
@@ -30,7 +30,7 @@ function MainApp() {
 
   return (
     <App {...params}>
-      <View browserHistorySeparator="" browserHistory main url="/login" />
+      <View browserHistorySeparator="" browserHistory main url="/" />
     </App>
   );
 }

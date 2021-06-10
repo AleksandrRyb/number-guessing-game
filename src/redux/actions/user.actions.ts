@@ -28,7 +28,7 @@ export interface LogOutAction {
   type: types.LOG_OUT;
 }
 
-export type Actions =
+export type UserActions =
   | UserLoginRequestAction
   | UserLoginSuccessAction
   | UserLoginFailureAction

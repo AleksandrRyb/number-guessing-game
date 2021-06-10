@@ -1,49 +1,49 @@
 import { UserActionTypes as types } from "../action-types/user.action-types";
-import { Actions } from "../actions/user.actions";
+import { UserActions } from "../actions/user.actions";
 import firebase from "firebase";
 
 interface UserState {
-  isFetching: boolean;
+  isFetchingUser: boolean;
   user: firebase.User | null;
   userLoginRequest: boolean;
 }
 
 const initialState: UserState = {
-  isFetching: true,
+  isFetchingUser: true,
   user: null,
   userLoginRequest: false,
 };
 
-function userReducer(state: UserState = initialState, action: Actions) {
+function userReducer(state: UserState = initialState, action: UserActions) {
   switch (action.type) {
     case types.USER_LOGIN_REQUEST:
       return {
         ...state,
         userLoginRequest: true,
-        isFetching: true,
+        isFetchingUser: true,
       };
     case types.USER_LOGIN_SUCCESS:
       return {
         ...state,
         userLoginRequest: true,
-        isFetching: false,
+        isFetchingUser: false,
         user: action.payload,
       };
     case types.USER_LOGIN_FAILURE:
       return {
         ...state,
         userLoginRequest: true,
-        isFetching: false,
+        isFetchingUser: false,
       };
     case types.USER_LISTENING:
       return {
         ...state,
-        isFetching: true,
+        isFetchingUser: true,
       };
     case types.SET_USER:
       return {
         ...state,
-        isFetching: false,
+        isFetchingUser: false,
         user: action.payload,
       };
     case types.LOG_OUT:

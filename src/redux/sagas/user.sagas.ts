@@ -7,12 +7,12 @@ import {
   userLoginFailure,
   setUser,
 } from "../action-creators/user.action-creators";
-import { Actions } from "../actions/user.actions";
+import { UserActions } from "../actions/user.actions";
 import * as db from "../../firebase/api/user.api";
 
 export function* userLoginSaga(): SagaIterator {
   while (true) {
-    yield take<Actions>(types.USER_LOGIN_REQUEST);
+    yield take<UserActions>(types.USER_LOGIN_REQUEST);
     const data = yield call(db.signInWithGoogle);
 
     if (data.user) {
@@ -24,14 +24,14 @@ export function* userLoginSaga(): SagaIterator {
 
 export function* userListeningSaga(): SagaIterator {
   while (true) {
-    const action = yield take<Actions>(types.USER_LISTENING);
+    const action = yield take<UserActions>(types.USER_LISTENING);
     yield put(setUser(action.payload));
   }
 }
 
 export function* userLogOut(): SagaIterator {
   while (true) {
-    yield take<Actions>(types.LOG_OUT);
+    yield take<UserActions>(types.LOG_OUT);
     yield call(db.logOut);
   }
 }

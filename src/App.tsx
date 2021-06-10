@@ -10,7 +10,7 @@ import { params } from "./routes";
 
 function MainApp() {
   const dispatch = useActions();
-  const { isFetching, user, userLoginRequest } = useTypedSelector(
+  const { isFetchingUser, user, userLoginRequest } = useTypedSelector(
     (state) => state.user
   );
 
@@ -22,7 +22,7 @@ function MainApp() {
     });
   }, []);
 
-  if (isFetching) {
+  if (isFetchingUser) {
     return (
       <Preloader size={70} color="blue" style={{ margin: "50vh, auto" }} />
     );

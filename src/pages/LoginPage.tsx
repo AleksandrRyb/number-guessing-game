@@ -14,16 +14,16 @@ import {
 } from "framework7-react";
 
 function LoginPage({ f7router }: any) {
-  const { user, isFetching } = useTypedSelector((state) => state.user);
+  const { user, isFetchingUser } = useTypedSelector((state) => state.user);
   const dispatch = useActions();
 
   React.useEffect(() => {
-    if (user && !isFetching) {
+    if (user && !isFetchingUser) {
       f7router.navigate("/");
     }
   }, [dispatch]);
 
-  if (isFetching || user) {
+  if (isFetchingUser || user) {
     return (
       <Preloader size={70} color="blue" style={{ margin: "50vh, auto" }} />
     );

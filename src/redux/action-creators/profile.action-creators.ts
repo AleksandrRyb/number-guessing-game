@@ -1,16 +1,13 @@
 import firebase from "firebase/app";
 import { ProfileActionTypes as types } from "../action-types/profile.action-types";
-import {
+import type {
   ProfileRequestAction,
   GetProfileAction,
   UpdateProfileAction,
-  CreateProfileAction,
-  Profile,
 } from "../actions/profile.actions";
+import type { Profile } from "../../types/profile.types";
 
-export function profileRequestAction(
-  user: firebase.User
-): ProfileRequestAction {
+export function profileRequest(user: firebase.User): ProfileRequestAction {
   return {
     type: types.PROFILE_REQUEST,
     payload: user,
@@ -26,16 +23,10 @@ export function getProfile(profile: Profile): GetProfileAction {
 
 export function updateProfile(
   profileId: string,
-  result: "win" | "lose"
+  isWinner: boolean
 ): UpdateProfileAction {
   return {
     type: types.UPDATE_PROFILE,
-  };
-}
-
-export function createProfile(profile: Profile): CreateProfileAction {
-  return {
-    type: types.CREATE_PROFILE,
-    payload: profile,
+    payload: { profileId, isWinner },
   };
 }

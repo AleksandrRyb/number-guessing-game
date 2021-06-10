@@ -1,27 +1,15 @@
 import firebase from "firebase/app";
 import { ProfileActionTypes as types } from "../action-types/profile.action-types";
-
-export type Profile = {
-  userId: string;
-  name: string;
-  avatar: string;
-  email: string;
-  wins: number;
-  loses: number;
-};
+import type { Profile } from "../../types/profile.types";
 
 export interface GetProfileAction {
   type: types.GET_PROFILE;
   payload: Profile;
 }
 
-export interface CreateProfileAction {
-  type: types.CREATE_PROFILE;
-  payload: Profile;
-}
-
 export interface UpdateProfileAction {
   type: types.UPDATE_PROFILE;
+  payload: { profileId: string; isWinner: boolean };
 }
 
 export interface ProfileRequestAction {
@@ -31,6 +19,5 @@ export interface ProfileRequestAction {
 
 export type ProfileActions =
   | GetProfileAction
-  | CreateProfileAction
   | UpdateProfileAction
   | ProfileRequestAction;

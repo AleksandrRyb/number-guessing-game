@@ -1,5 +1,8 @@
 import { useDispatch } from "react-redux";
-import { Actions } from "../redux/actions/user.actions";
+import { UserActions } from "../redux/actions/user.actions";
+import { ProfileActions } from "../redux/actions/profile.actions";
+
+type Actions = UserActions | ProfileActions;
 
 export function useActions() {
   const dispatch = useDispatch();

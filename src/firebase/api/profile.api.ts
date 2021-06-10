@@ -4,17 +4,17 @@ import { firebaseApp } from "../init";
 const db = firebaseApp.firestore();
 
 export async function getProfile(user: firebase.User) {
-  const snapshot = await db
+  const existedProfile = await db
     .collection("profiles")
     .where("userId", "==", user.uid)
     .get();
 
-  return snapshot;
-}
+  if (existedProfile) {
+    return existedProfile;
+  }
 
-export async function createProfile(user: firebase.User) {
   const { uid, displayName, photoURL, email } = user;
-  const snapshot = await db.collection("profile").add({
+  const profile = await db.collection("profile").add({
     userId: uid,
     name: displayName,
     avatar: photoURL,
@@ -23,11 +23,11 @@ export async function createProfile(user: firebase.User) {
     loses: 0,
   });
 
-  return snapshot;
+  return profile;
 }
 
-export async function updateProfile(profileId: string, result: "win" | "lose") {
-  if (result === "win") {
+export async function updateProfile(profileId: string, isWinner: boolean) {
+  if (isWinner) {
     await db
       .collection("profiles")
       .doc(profileId)

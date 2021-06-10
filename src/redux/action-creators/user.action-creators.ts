@@ -4,8 +4,12 @@ import {
   UserLoginSuccessAction,
   UserLoginRequestAction,
   UserListeningAction,
+  UserListeningSuccessAction,
+  UserListeningFailureAction,
   SetUserAction,
+  UnsetUserAction,
   LogOutAction,
+  LogOutSuccessAction,
 } from "../actions/user.actions";
 import firebase from "firebase";
 
@@ -15,10 +19,9 @@ export function userLoginRequest(): UserLoginRequestAction {
   };
 }
 
-export function userLoginSuccess(user: firebase.User): UserLoginSuccessAction {
+export function userLoginSuccess(): UserLoginSuccessAction {
   return {
     type: types.USER_LOGIN_SUCCESS,
-    payload: user,
   };
 }
 
@@ -35,6 +38,18 @@ export function userListening(user: firebase.User | null): UserListeningAction {
   };
 }
 
+export function userListeningSuccess(): UserListeningSuccessAction {
+  return {
+    type: types.USER_LISTENING_SUCCESS,
+  };
+}
+
+export function userListeningFailure(): UserListeningFailureAction {
+  return {
+    type: types.USER_LISTENING_FAILURE,
+  };
+}
+
 export function setUser(user: firebase.User): SetUserAction {
   return {
     type: types.SET_USER,
@@ -42,8 +57,20 @@ export function setUser(user: firebase.User): SetUserAction {
   };
 }
 
+export function unsetUser(): UnsetUserAction {
+  return {
+    type: types.UNSET_USER,
+  };
+}
+
 export function logOut(): LogOutAction {
   return {
     type: types.LOG_OUT,
+  };
+}
+
+export function logOutSuccess(): LogOutSuccessAction {
+  return {
+    type: types.LOG_OUT_SUCCESS,
   };
 }

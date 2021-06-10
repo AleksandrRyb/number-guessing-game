@@ -2,6 +2,7 @@ import React from "react";
 import { useActions } from "../hooks/use-action.hooks";
 import { useTypedSelector } from "../hooks/use-typed-selector.hooks";
 import { logOut } from "../redux/action-creators/user.action-creators";
+import { profileRequest } from "../redux/action-creators/profile.action-creators";
 
 import GameList from "../components/GameList";
 import ProfileCard from "../components/ProfileCard";
@@ -20,16 +21,15 @@ import {
 function HomePage({ f7router }: any) {
   const dispatch = useActions();
   const { user, isFetchingUser } = useTypedSelector((state) => state.user);
+  const { profile, isFetchingProfile } = useTypedSelector(
+    (state) => state.profile
+  );
 
   React.useEffect(() => {
     if (!user && !isFetchingUser) {
       f7router.navigate("/login");
     }
-  }, []);
-
-  if (isFetchingUser) {
-    return <div>Loading...</div>;
-  }
+  }, [user, isFetchingUser]);
 
   return (
     <Page className="main">

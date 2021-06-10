@@ -7,7 +7,6 @@ export interface UserLoginRequestAction {
 
 export interface UserLoginSuccessAction {
   type: types.USER_LOGIN_SUCCESS;
-  payload: firebase.User;
 }
 
 export interface UserLoginFailureAction {
@@ -19,19 +18,39 @@ export interface UserListeningAction {
   payload: firebase.User | null;
 }
 
+export interface UserListeningSuccessAction {
+  type: types.USER_LISTENING_SUCCESS;
+}
+
+export interface UserListeningFailureAction {
+  type: types.USER_LISTENING_FAILURE;
+}
+
 export interface SetUserAction {
   type: types.SET_USER;
   payload: firebase.User;
+}
+
+export interface UnsetUserAction {
+  type: types.UNSET_USER;
 }
 
 export interface LogOutAction {
   type: types.LOG_OUT;
 }
 
+export interface LogOutSuccessAction {
+  type: types.LOG_OUT_SUCCESS;
+}
+
 export type UserActions =
   | UserLoginRequestAction
   | UserLoginSuccessAction
   | UserLoginFailureAction
-  | SetUserAction
   | UserListeningAction
-  | LogOutAction;
+  | UserListeningFailureAction
+  | UserListeningSuccessAction
+  | SetUserAction
+  | UnsetUserAction
+  | LogOutAction
+  | LogOutSuccessAction;

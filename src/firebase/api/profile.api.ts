@@ -8,13 +8,12 @@ export async function getProfile(user: firebase.User) {
     .collection("profiles")
     .where("userId", "==", user.uid)
     .get();
-
   if (existedProfile) {
     return existedProfile;
   }
 
   const { uid, displayName, photoURL, email } = user;
-  const profile = await db.collection("profile").add({
+  const profile = await db.collection("profiles").add({
     userId: uid,
     name: displayName,
     avatar: photoURL,

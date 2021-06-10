@@ -5,13 +5,13 @@ import firebase from "firebase";
 interface UserState {
   isFetchingUser: boolean;
   user: firebase.User | null;
-  userLoginRequest: boolean;
+  isListening: boolean;
 }
 
 const initialState: UserState = {
-  isFetchingUser: true,
+  isFetchingUser: false,
   user: null,
-  userLoginRequest: false,
+  isListening: true,
 };
 
 function userReducer(state: UserState = initialState, action: UserActions) {
@@ -19,39 +19,58 @@ function userReducer(state: UserState = initialState, action: UserActions) {
     case types.USER_LOGIN_REQUEST:
       return {
         ...state,
-        userLoginRequest: true,
         isFetchingUser: true,
+        isListening: false,
       };
     case types.USER_LOGIN_SUCCESS:
       return {
         ...state,
-        userLoginRequest: true,
         isFetchingUser: false,
-        user: action.payload,
+        isListening: true,
       };
     case types.USER_LOGIN_FAILURE:
       return {
         ...state,
-        userLoginRequest: true,
         isFetchingUser: false,
+        isListening: true,
       };
     case types.USER_LISTENING:
       return {
         ...state,
         isFetchingUser: true,
       };
-    case types.SET_USER:
+    case types.USER_LISTENING_FAILURE:
       return {
         ...state,
         isFetchingUser: false,
-        user: action.payload,
+      };
+    case types.USER_LISTENING_SUCCESS:
+      return {
+        ...state,
+        isFetchingUser: false,
       };
     case types.LOG_OUT:
       return {
         ...state,
+        isListening: false,
+        isFetchingUser: true,
+      };
+    case types.LOG_OUT_SUCCESS:
+      return {
+        ...state,
+        isListening: true,
+        isFetchingUser: false,
+      };
+    case types.SET_USER:
+      return {
+        ...state,
+        user: action.payload,
+      };
+    case types.UNSET_USER:
+      return {
+        ...state,
         user: null,
       };
-
     default:
       return state;
   }

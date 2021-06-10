@@ -27,6 +27,7 @@ function GameList({ user }: User) {
       {games.map((game) =>
         !user ? (
           <SkeletonBlock
+            key={game.gameId}
             className="margin-bottom"
             style={{
               margin: "0 auto",

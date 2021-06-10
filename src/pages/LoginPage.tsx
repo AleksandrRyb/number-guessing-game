@@ -21,13 +21,13 @@ function LoginPage({ f7router }: any) {
     if (user && !isFetchingUser) {
       f7router.navigate("/");
     }
-  }, [dispatch]);
+  }, [user, isFetchingUser]);
 
-  if (isFetchingUser || user) {
-    return (
-      <Preloader size={70} color="blue" style={{ margin: "50vh, auto" }} />
-    );
-  }
+  // if (isFetchingUser || user) {
+  //   return (
+  //     <Preloader size={70} color="blue" style={{ margin: "50vh, auto" }} />
+  //   );
+  // }
 
   return (
     <Page className="login">

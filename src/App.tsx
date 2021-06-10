@@ -1,32 +1,34 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
+import { f7 } from "framework7-react";
 import { useTypedSelector } from "./hooks/use-typed-selector.hooks";
 import { useActions } from "./hooks/use-action.hooks";
 import { userListening } from "./redux/action-creators/user.action-creators";
 import { checkAuth } from "./firebase/api/user.api";
 
-import { App, View, Preloader } from "framework7-react";
+import { App, View } from "framework7-react";
 import { params } from "./routes";
 
 function MainApp() {
   const dispatch = useActions();
-  const { isFetchingUser, user, userLoginRequest } = useTypedSelector(
+  const { isFetchingUser, user, isListening } = useTypedSelector(
     (state) => state.user
   );
 
+  // React.useEffect(() => {
+  //   if (!user && !isFetchingUser) {
+  //     console.log(user, isFetchingUser);
+  //     f7.views.main.router.navigate("/login");
+  //   }
+  // }, [user, isFetchingUser]);
+
   React.useEffect(() => {
     return checkAuth((user) => {
-      if (!userLoginRequest) {
+      if (isListening && user) {
         dispatch(userListening(user));
       }
     });
-  }, []);
-
-  if (isFetchingUser) {
-    return (
-      <Preloader size={70} color="blue" style={{ margin: "50vh, auto" }} />
-    );
-  }
+  }, [isListening]);
 
   return (
     <App {...params}>

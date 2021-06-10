@@ -9,6 +9,7 @@ import * as db from "../../firebase/api/profile.api";
 export function* getProfileSaga(): SagaIterator {
   while (true) {
     const action = yield take<ProfileActions>(types.PROFILE_REQUEST);
+    console.log(action);
     const profile = yield call(db.getProfile, action.payload);
     yield put(getProfile(profile));
   }

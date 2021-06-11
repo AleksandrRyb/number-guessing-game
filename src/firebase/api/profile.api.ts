@@ -4,16 +4,20 @@ import { firebaseApp } from "../init";
 const db = firebaseApp.firestore();
 
 export async function getProfile(user: firebase.User) {
-  const existedProfile = await db
+  const existedData = await db
     .collection("profiles")
     .where("userId", "==", user.uid)
     .get();
+  const existedProfile = {
+    id: existedData.docs[0].id,
+    ...existedData.docs[0].data(),
+  };
   if (existedProfile) {
     return existedProfile;
   }
 
   const { uid, displayName, photoURL, email } = user;
-  const profile = await db.collection("profiles").add({
+  const newData = await db.collection("profiles").add({
     userId: uid,
     name: displayName,
     avatar: photoURL,
@@ -21,8 +25,8 @@ export async function getProfile(user: firebase.User) {
     wins: 0,
     loses: 0,
   });
-
-  return profile;
+  const newProfile = { id: newData.id, ...(await newData.get()).data() };
+  return newProfile;
 }
 
 export async function updateProfile(profileId: string, isWinner: boolean) {
@@ -41,4 +45,8 @@ export async function updateProfile(profileId: string, isWinner: boolean) {
         loses: firebase.firestore.FieldValue.increment(1),
       });
   }
+
+  const data = await db.collection("profiles").doc(profileId).get();
+  const updatedProfile = { id: data.id, ...data.data() };
+  return updatedProfile;
 }

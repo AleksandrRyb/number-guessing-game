@@ -2,8 +2,11 @@ import firebase from "firebase/app";
 import { ProfileActionTypes as types } from "../action-types/profile.action-types";
 import type {
   ProfileRequestAction,
-  GetProfileAction,
+  ProfileRequestSuccessAction,
+  ProfileRequestFailureAction,
   UpdateProfileAction,
+  UpdateProfileFailureAction,
+  UpdateProfileSuccessAction,
 } from "../actions/profile.actions";
 import type { Profile } from "../../types/profile.types";
 
@@ -14,10 +17,20 @@ export function profileRequest(user: firebase.User): ProfileRequestAction {
   };
 }
 
-export function getProfile(profile: Profile): GetProfileAction {
+export function profileRequestSuccess(
+  profile: Profile
+): ProfileRequestSuccessAction {
   return {
-    type: types.GET_PROFILE,
+    type: types.PROFILE_REQUEST_SUCCESS,
     payload: profile,
+  };
+}
+
+export function profileRequestFailure(
+  profile: Profile
+): ProfileRequestFailureAction {
+  return {
+    type: types.PROFILE_REQUEST_FAILURE,
   };
 }
 
@@ -28,5 +41,20 @@ export function updateProfile(
   return {
     type: types.UPDATE_PROFILE,
     payload: { profileId, isWinner },
+  };
+}
+
+export function updateProfileSuccess(
+  profile: Profile
+): UpdateProfileSuccessAction {
+  return {
+    type: types.UPDATE_PROFILE_SUCCESS,
+    payload: profile,
+  };
+}
+
+export function updateProfileFailure(): UpdateProfileFailureAction {
+  return {
+    type: types.UPDATE_PROFILE_FAILURE,
   };
 }

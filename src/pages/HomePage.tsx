@@ -2,7 +2,10 @@ import React from "react";
 import { useActions } from "../hooks/use-action.hooks";
 import { useTypedSelector } from "../hooks/use-typed-selector.hooks";
 import { logOut } from "../redux/action-creators/user.action-creators";
-import { profileRequest } from "../redux/action-creators/profile.action-creators";
+import {
+  profileRequest,
+  updateProfile,
+} from "../redux/action-creators/profile.action-creators";
 
 import GameList from "../components/GameList";
 import ProfileCard from "../components/ProfileCard";
@@ -16,7 +19,6 @@ import {
   BlockTitle,
   SkeletonBlock,
   SkeletonText,
-  Preloader,
 } from "framework7-react";
 
 function HomePage({ f7router }: any) {
@@ -33,6 +35,12 @@ function HomePage({ f7router }: any) {
       f7router.navigate("/login");
     }
   }, [user, isFetchingUser]);
+
+  React.useEffect(() => {
+    if (user && !profile) {
+      dispatch(profileRequest(user));
+    }
+  }, [user]);
 
   return (
     <Page className="main">

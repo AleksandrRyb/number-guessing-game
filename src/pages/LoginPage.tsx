@@ -14,9 +14,7 @@ import {
 } from "framework7-react";
 
 function LoginPage({ f7router }: any) {
-  const { user, isFetchingUser, isListening } = useTypedSelector(
-    (state) => state.user
-  );
+  const { user, isListening } = useTypedSelector((state) => state.user);
   const dispatch = useActions();
 
   React.useEffect(() => {

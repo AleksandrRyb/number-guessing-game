@@ -32,7 +32,6 @@ function userReducer(state: UserState = initialState, action: UserActions) {
       return {
         ...state,
         isFetchingUser: false,
-        isListening: true,
       };
     case types.USER_LISTENING:
       return {
@@ -43,6 +42,7 @@ function userReducer(state: UserState = initialState, action: UserActions) {
       return {
         ...state,
         isFetchingUser: false,
+        isListening: false,
       };
     case types.USER_LISTENING_SUCCESS:
       return {
@@ -58,8 +58,8 @@ function userReducer(state: UserState = initialState, action: UserActions) {
     case types.LOG_OUT_SUCCESS:
       return {
         ...state,
-        isListening: true,
         isFetchingUser: false,
+        isListening: false,
       };
     case types.SET_USER:
       return {

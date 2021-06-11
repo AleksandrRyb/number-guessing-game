@@ -16,17 +16,20 @@ import {
   BlockTitle,
   SkeletonBlock,
   SkeletonText,
+  Preloader,
 } from "framework7-react";
 
 function HomePage({ f7router }: any) {
   const dispatch = useActions();
-  const { user, isFetchingUser } = useTypedSelector((state) => state.user);
+  const { user, isFetchingUser, isListening } = useTypedSelector(
+    (state) => state.user
+  );
   const { profile, isFetchingProfile } = useTypedSelector(
     (state) => state.profile
   );
 
   React.useEffect(() => {
-    if (!user && !isFetchingUser) {
+    if (!user && !isListening) {
       f7router.navigate("/login");
     }
   }, [user, isFetchingUser]);

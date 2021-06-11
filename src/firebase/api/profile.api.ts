@@ -4,23 +4,28 @@ import { firebaseApp } from "../init";
 const db = firebaseApp.firestore();
 
 export async function getProfile(user: firebase.User) {
-  const existedData = await db
+  //try to get existed profile if it exists
+  const response = await db
     .collection("profiles")
     .where("userId", "==", user.uid)
     .get();
-  const existedProfile = {
-    id: existedData.docs[0].id,
-    ...existedData.docs[0].data(),
-  };
-  if (existedProfile) {
+
+  if (response.size !== 0) {
+    const existedProfile = {
+      id: response.docs[0].id,
+      ...response.docs[0].data(),
+    };
+
     return existedProfile;
   }
 
+  // if in not, create new profile
   const { uid, displayName, photoURL, email } = user;
   const newData = await db.collection("profiles").add({
     userId: uid,
     name: displayName,
     avatar: photoURL,
+    created: firebase.firestore.FieldValue.serverTimestamp(),
     email: email,
     wins: 0,
     loses: 0,
@@ -30,23 +35,14 @@ export async function getProfile(user: firebase.User) {
 }
 
 export async function updateProfile(profileId: string, isWinner: boolean) {
-  if (isWinner) {
-    await db
-      .collection("profiles")
-      .doc(profileId)
-      .update({
-        wins: firebase.firestore.FieldValue.increment(1),
-      });
-  } else {
-    await db
-      .collection("profiles")
-      .doc(profileId)
-      .update({
-        loses: firebase.firestore.FieldValue.increment(1),
-      });
-  }
+  const updatedProfile = await db
+    .collection("profiles")
+    .doc(profileId)
+    .update({
+      [isWinner ? "wins" : "loses"]: firebase.firestore.FieldValue.increment(1),
+    })
+    .then(() => true)
+    .catch(() => false);
 
-  const data = await db.collection("profiles").doc(profileId).get();
-  const updatedProfile = { id: data.id, ...data.data() };
   return updatedProfile;
 }

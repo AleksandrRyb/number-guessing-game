@@ -31,10 +31,10 @@ export function* updateProfileSaga(): SagaIterator {
     const {
       payload: { profileId, isWinner },
     } = yield take<ProfileActions>(types.UPDATE_PROFILE);
-    const profile = yield call(db.updateProfile, profileId, isWinner);
+    const updated = yield call(db.updateProfile, profileId, isWinner);
 
-    if (profile) {
-      yield put(updateProfileSuccess(profile));
+    if (updated) {
+      yield put(updateProfileSuccess());
       return;
     }
 

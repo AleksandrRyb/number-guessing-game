@@ -41,7 +41,6 @@ function profileReducer(
     case types.UPDATE_PROFILE_SUCCESS:
       return {
         ...state,
-        profile: action.payload,
         isFetchingProfile: false,
       };
     case types.UPDATE_PROFILE_FAILURE:

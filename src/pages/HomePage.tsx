@@ -87,7 +87,7 @@ function HomePage({ f7router }: any) {
           <BlockTitle large>Player Profile</BlockTitle>
         )}
 
-        <ProfileCard user={user} />
+        <ProfileCard profile={profile} />
 
         <div>
           {!user ? (

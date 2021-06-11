@@ -9,7 +9,6 @@ export interface UpdateProfileAction {
 
 export interface UpdateProfileSuccessAction {
   type: types.UPDATE_PROFILE_SUCCESS;
-  payload: Profile;
 }
 
 export interface UpdateProfileFailureAction {

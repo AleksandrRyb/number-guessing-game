@@ -44,12 +44,9 @@ export function updateProfile(
   };
 }
 
-export function updateProfileSuccess(
-  profile: Profile
-): UpdateProfileSuccessAction {
+export function updateProfileSuccess(): UpdateProfileSuccessAction {
   return {
     type: types.UPDATE_PROFILE_SUCCESS,
-    payload: profile,
   };
 }
 

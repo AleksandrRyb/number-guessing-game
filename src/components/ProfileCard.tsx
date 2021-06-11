@@ -1,17 +1,17 @@
-//@ts-nocheck
 import React from "react";
-import firebase from "firebase";
+import { Profile } from "../types/profile.types";
 
 import { Card, CardHeader, CardContent, SkeletonBlock } from "framework7-react";
 
-type User = {
-  user: firebase.User | null;
+type IProfile = {
+  profile: Profile | null;
 };
 
-function ProfileCard({ user }: User) {
-  if (!user) {
+function ProfileCard({ profile }: IProfile) {
+  if (!profile) {
     return (
       <SkeletonBlock
+        tag="div"
         className="margin-bottom"
         effect="wave"
         width="350px"
@@ -33,7 +33,7 @@ function ProfileCard({ user }: User) {
             borderRadius: "50%",
           }}
           alt="player name"
-          src={user?.photoURL}
+          src={profile?.avatar}
         />
       </CardHeader>
 
@@ -45,10 +45,10 @@ function ProfileCard({ user }: User) {
             color: "black",
           }}
         >
-          {user?.displayName?.toUpperCase()}
+          {profile?.name.toUpperCase()}
         </div>
-        <span className="margin-right">Wins: 6</span>
-        <span>Loses: 1</span>
+        <span className="margin-right">Wins: {profile.wins}</span>
+        <span>Loses: {profile.loses}</span>
       </CardContent>
     </Card>
   );

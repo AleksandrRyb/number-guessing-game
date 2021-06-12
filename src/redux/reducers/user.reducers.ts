@@ -1,53 +1,76 @@
 import { UserActionTypes as types } from "../action-types/user.action-types";
-import { Actions } from "../actions/user.actions";
+import { UserActions } from "../actions/user.actions";
 import firebase from "firebase";
 
 interface UserState {
-  loading: boolean;
+  isFetchingUser: boolean;
   user: firebase.User | null;
-  failureLogin?: string;
+  isListening: boolean;
 }
 
 const initialState: UserState = {
-  loading: false,
+  isFetchingUser: false,
   user: null,
+  isListening: true,
 };
 
-function userReducer(state: UserState = initialState, action: Actions) {
+function userReducer(state: UserState = initialState, action: UserActions) {
   switch (action.type) {
     case types.USER_LOGIN_REQUEST:
       return {
         ...state,
-        loading: true,
+        isFetchingUser: true,
+        isListening: false,
       };
     case types.USER_LOGIN_SUCCESS:
       return {
         ...state,
-        loading: false,
-        user: action.payload,
+        isFetchingUser: false,
+        isListening: true,
       };
     case types.USER_LOGIN_FAILURE:
       return {
         ...state,
-        loading: false,
+        isFetchingUser: false,
       };
     case types.USER_LISTENING:
       return {
         ...state,
-        loading: true,
+        isFetchingUser: true,
       };
-    case types.SET_USER:
+    case types.USER_LISTENING_FAILURE:
       return {
         ...state,
-        loading: false,
-        user: action.payload,
+        isFetchingUser: false,
+        isListening: false,
+      };
+    case types.USER_LISTENING_SUCCESS:
+      return {
+        ...state,
+        isFetchingUser: false,
       };
     case types.LOG_OUT:
       return {
         ...state,
+        isListening: false,
+        isFetchingUser: true,
+      };
+    case types.LOG_OUT_SUCCESS:
+      return {
+        ...state,
+        isFetchingUser: false,
+        isListening: false,
+      };
+    case types.SET_USER:
+      return {
+        ...state,
+        user: action.payload,
+      };
+    case types.UNSET_USER:
+      return {
+        ...state,
         user: null,
       };
-
     default:
       return state;
   }

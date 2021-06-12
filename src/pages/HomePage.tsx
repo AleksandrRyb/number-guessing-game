@@ -1,7 +1,14 @@
 import React from "react";
-import { useActions } from "../redux/hooks/use-action.hooks";
+import { useActions } from "../hooks/use-action.hooks";
+import { useTypedSelector } from "../hooks/use-typed-selector.hooks";
 import { logOut } from "../redux/action-creators/user.action-creators";
+import {
+  profileRequest,
+  updateProfile,
+} from "../redux/action-creators/profile.action-creators";
 
+import GameList from "../components/GameList";
+import ProfileCard from "../components/ProfileCard";
 import {
   Button,
   Navbar,
@@ -10,110 +17,101 @@ import {
   Page,
   PageContent,
   BlockTitle,
-  Card,
-  CardHeader,
-  CardContent,
-  List,
-  ListItem,
+  SkeletonBlock,
+  SkeletonText,
 } from "framework7-react";
 
-const games = [
-  {
-    avatar: "https://i.imgflip.com/13ga6y.jpg",
-    username: "john snow",
-    gameId: "fsg9s9gr9dug9uwgh",
-  },
-  {
-    avatar:
-      "https://www.meme-arsenal.com/memes/22cabae738382238ae798d49707b4b30.jpg",
-    username: "daenerys targaryen",
-    gameId: "sg9s9gr9dfrgrgh",
-  },
-];
-
-function HomePage() {
+function HomePage({ f7router }: any) {
   const dispatch = useActions();
+  const { user, isFetchingUser, isListening } = useTypedSelector(
+    (state) => state.user
+  );
+  const { profile, isFetchingProfile } = useTypedSelector(
+    (state) => state.profile
+  );
+
+  //Redirect if user not logged in
+  React.useEffect(() => {
+    if (!user && !isListening) {
+      f7router.navigate("/login");
+    }
+  }, [user, isFetchingUser]);
+
+  //Get Profile data if user logged in and profile does not exists
+  React.useEffect(() => {
+    if (user && !profile) {
+      dispatch(profileRequest(user));
+    }
+  }, [user]);
+
+  const noUserTitle = (
+    <SkeletonText tag="div" effect="wave" className="title">
+      Number Guessing Game
+    </SkeletonText>
+  );
+  const title = <NavTitle>Number Guessing Game</NavTitle>;
+
+  const noUserProfileTitle = (
+    <SkeletonText
+      tag="div"
+      effect="wave"
+      style={{ borderRadius: "10px" }}
+      className="block-title block-title-large"
+    >
+      Player Profile
+    </SkeletonText>
+  );
+  const profileTitle = <BlockTitle large>Player Profile</BlockTitle>;
+
+  const noUserStartGameButton = (
+    <SkeletonBlock
+      tag="button"
+      width="145px"
+      height="36px"
+      borderRadius="5px"
+      effect="wave"
+      className="display-inline-block"
+      style={{ border: "none" }}
+    />
+  );
+  const startGameButton = (
+    <Button className="display-inline-block" fill text="start the game" />
+  );
+
+  const noUserLogOutButton = (
+    <SkeletonBlock
+      tag="button"
+      width="80px"
+      height="36px"
+      borderRadius="5px"
+      effect="wave"
+      className="margin-right"
+      style={{ border: "none" }}
+    />
+  );
+
+  const logOutButton = (
+    <Button
+      onClick={() => dispatch(logOut())}
+      text="Logout"
+      fill
+      className="margin-right"
+    />
+  );
 
   return (
     <Page className="main">
       <Navbar>
-        <NavTitle>Number Guessing Game</NavTitle>
-        <NavRight>
-          <Button
-            onClick={() => dispatch(logOut())}
-            text="Logout"
-            fill
-            className="margin-right"
-          />
-        </NavRight>
+        {!user ? noUserTitle : title}
+        <NavRight>{!user ? noUserLogOutButton : logOutButton}</NavRight>
       </Navbar>
       <PageContent className="text-align-center">
-        <BlockTitle large>Player Profile</BlockTitle>
-        <PlayerCard />
-        <div>
-          <Button className="display-inline-block" fill text="start the game" />
-        </div>
-        <GameList />
+        {!user ? noUserProfileTitle : profileTitle}
+        <ProfileCard profile={profile} />
+        <div>{!user ? noUserStartGameButton : startGameButton}</div>
+        <GameList user={user} />
       </PageContent>
     </Page>
-  );
-}
-
-function PlayerCard() {
-  return (
-    <Card className="display-inline-block" style={{ minWidth: 350 }}>
-      <CardHeader className="display-block">
-        <img
-          style={{
-            width: 220,
-            height: 220,
-            borderRadius: "50%",
-          }}
-          alt="player name"
-          src="https://upload.wikimedia.org/wikipedia/commons/f/f4/User_Avatar_2.png"
-        />
-      </CardHeader>
-
-      {/* Player Info */}
-      <CardContent>
-        <div
-          style={{
-            fontSize: 25,
-            color: "black",
-          }}
-        >
-          Score
-        </div>
-        <span className="margin-right">Wins: 6</span>
-        <span>Loses: 1</span>
-      </CardContent>
-    </Card>
-  );
-}
-
-function GameList() {
-  return (
-    <List>
-      {games.map((game) => (
-        <ListItem
-          link={`/${game.gameId}`}
-          title={`Game owner: ${game.username}`}
-          key={game.gameId}
-          // onClick={change route func}
-        >
-          <img
-            style={{
-              width: 50,
-              height: 50,
-              borderRadius: "50%",
-              backgroundSize: "cover",
-            }}
-            src={game.avatar}
-            alt={`number guessing game ${game.username}`}
-          />
-        </ListItem>
-      ))}
-    </List>
   );
 }
 

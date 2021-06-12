@@ -1,14 +1,8 @@
-//@ts-nocheck
 import { take, put, call } from "redux-saga/effects";
 import { SagaIterator } from "@redux-saga/types";
 
 import { ProfileActionTypes as types } from "../action-types/profile.action-types";
-import {
-  profileRequestSuccess,
-  profileRequestFailure,
-  updateProfileFailure,
-  updateProfileSuccess,
-} from "../action-creators/profile.action-creators";
+import * as actionCreators from "../action-creators/profile.action-creators";
 import { ProfileActions } from "../actions/profile.actions";
 import * as db from "../../firebase/api/profile.api";
 
@@ -18,11 +12,11 @@ export function* getProfileSaga(): SagaIterator {
     const profile = yield call(db.getProfile, action.payload);
 
     if (profile) {
-      yield put(profileRequestSuccess(profile));
+      yield put(actionCreators.profileRequestSuccess(profile));
       return;
     }
 
-    yield put(profileRequestFailure(profile));
+    yield put(actionCreators.profileRequestFailure(profile));
   }
 }
 
@@ -34,10 +28,10 @@ export function* updateProfileSaga(): SagaIterator {
     const updated = yield call(db.updateProfile, profileId, isWinner);
 
     if (updated) {
-      yield put(updateProfileSuccess());
+      yield put(actionCreators.updateProfileSuccess());
       return;
     }
 
-    yield put(updateProfileFailure());
+    yield put(actionCreators.updateProfileFailure());
   }
 }

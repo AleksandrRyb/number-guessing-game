@@ -17,6 +17,7 @@ function LoginPage({ f7router }: any) {
   const { user, isListening } = useTypedSelector((state) => state.user);
   const dispatch = useActions();
 
+  //Redirect if user is logged in
   React.useEffect(() => {
     if (user) {
       f7router.navigate("/");

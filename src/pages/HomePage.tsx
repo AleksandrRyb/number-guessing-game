@@ -30,12 +30,14 @@ function HomePage({ f7router }: any) {
     (state) => state.profile
   );
 
+  //Redirect if user not logged in
   React.useEffect(() => {
     if (!user && !isListening) {
       f7router.navigate("/login");
     }
   }, [user, isFetchingUser]);
 
+  //Get Profile data if user logged in and profile does not exists
   React.useEffect(() => {
     if (user && !profile) {
       dispatch(profileRequest(user));

@@ -6,4 +6,5 @@ export type Profile = {
   email: string;
   wins: number;
   loses: number;
+  created: Date;
 };

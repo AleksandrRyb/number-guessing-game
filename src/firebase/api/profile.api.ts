@@ -5,23 +5,23 @@ const db = firebaseApp.firestore();
 
 export async function getProfile(user: firebase.User) {
   //try to get existed profile if it exists
-  const response = await db
+  const existed = await db
     .collection("profiles")
     .where("userId", "==", user.uid)
     .get();
 
-  if (response.size !== 0) {
-    const existedProfile = {
-      id: response.docs[0].id,
-      ...response.docs[0].data(),
+  if (existed.size !== 0) {
+    const profile = {
+      id: existed.docs[0].id,
+      ...existed.docs[0].data(),
     };
 
-    return existedProfile;
+    return profile;
   }
 
   // if in not, create new profile
   const { uid, displayName, photoURL, email } = user;
-  const newData = await db.collection("profiles").add({
+  const created = await db.collection("profiles").add({
     userId: uid,
     name: displayName,
     avatar: photoURL,
@@ -30,7 +30,7 @@ export async function getProfile(user: firebase.User) {
     wins: 0,
     loses: 0,
   });
-  const newProfile = { id: newData.id, ...(await newData.get()).data() };
+  const newProfile = { id: created.id, ...(await created.get()).data() };
   return newProfile;
 }
 

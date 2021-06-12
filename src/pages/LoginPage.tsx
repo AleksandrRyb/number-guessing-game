@@ -24,44 +24,37 @@ function LoginPage({ f7router }: any) {
     }
   }, [user]);
 
-  return (
-    <Page className="login">
-      {isListening ? (
-        <PageContent
-          style={{ paddingTop: "40vh" }}
-          className="text-align-center"
-        >
-          <Preloader size={70} color="blue" />
-        </PageContent>
-      ) : (
-        <PageContent>
-          <BlockTitle
-            className="text-align-center"
-            style={{ marginBottom: "75px" }}
-            large
-          >
-            Login to join the number guessing game!
-          </BlockTitle>
-          <Block className="text-align-center">
-            <div style={{ marginBottom: "25px" }}>
-              <img
-                height="400px"
-                src={bluecard}
-                alt="humber guessing game login"
-              />
-            </div>
-            <div className="display-inline-block">
-              <Button
-                onClick={() => dispatch(userLoginRequest())}
-                fillMd
-                text="Login with google"
-              />
-            </div>
-          </Block>
-        </PageContent>
-      )}
-    </Page>
+  const authView = (
+    <PageContent style={{ paddingTop: "40vh" }} className="text-align-center">
+      <Preloader size={70} color="blue" />
+    </PageContent>
   );
+
+  const unAuthView = (
+    <PageContent>
+      <BlockTitle
+        className="text-align-center"
+        style={{ marginBottom: "75px" }}
+        large
+      >
+        Login to join the number guessing game!
+      </BlockTitle>
+      <Block className="text-align-center">
+        <div style={{ marginBottom: "25px" }}>
+          <img height="400px" src={bluecard} alt="humber guessing game login" />
+        </div>
+        <div className="display-inline-block">
+          <Button
+            onClick={() => dispatch(userLoginRequest())}
+            fillMd
+            text="Login with google"
+          />
+        </div>
+      </Block>
+    </PageContent>
+  );
+
+  return <Page className="login">{isListening ? authView : unAuthView}</Page>;
 }
 
 export default LoginPage;

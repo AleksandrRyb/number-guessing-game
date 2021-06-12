@@ -1,4 +1,3 @@
-//@ts-nocheck
 import React from "react";
 
 import "../styles/gamepage.css";
@@ -37,7 +36,7 @@ function GamePage() {
   const [popover, setPopover] = React.useState(false);
 
   return (
-    <Page hideContent className="game">
+    <Page className="game">
       <Navbar>
         <NavTitle>Game</NavTitle>
       </Navbar>

@@ -1,5 +1,5 @@
 import React from "react";
-import firebase from "firebase";
+import { User } from "../types/user.types";
 
 import { List, ListItem, SkeletonBlock } from "framework7-react";
 
@@ -17,49 +17,46 @@ const games = [
   },
 ];
 
-type User = {
-  user: firebase.User | null;
-};
-
 function GameList({ user }: User) {
-  return (
+  const noGamesView = (
+    <SkeletonBlock
+      className="margin-bottom"
+      style={{
+        margin: "0 auto",
+      }}
+      tag="div"
+      width="95vw"
+      height="60px"
+      borderRadius="10px"
+      effect="wave"
+    />
+  );
+
+  const gamesExistView = (
     <List>
-      {games.map((game) =>
-        !user ? (
-          <SkeletonBlock
-            key={game.gameId}
-            className="margin-bottom"
+      {games.map((game) => (
+        <ListItem
+          link={`/game/${game.gameId}`}
+          title={`Game owner: ${game.username}`}
+          key={game.gameId}
+          // onClick={change route func}
+        >
+          <img
             style={{
-              margin: "0 auto",
+              width: 50,
+              height: 50,
+              borderRadius: "50%",
+              backgroundSize: "cover",
             }}
-            tag="div"
-            width="95vw"
-            height="60px"
-            borderRadius="10px"
-            effect="wave"
+            src={game.avatar}
+            alt={`number guessing game ${game.username}`}
           />
-        ) : (
-          <ListItem
-            link={`/game/${game.gameId}`}
-            title={`Game owner: ${game.username}`}
-            key={game.gameId}
-            // onClick={change route func}
-          >
-            <img
-              style={{
-                width: 50,
-                height: 50,
-                borderRadius: "50%",
-                backgroundSize: "cover",
-              }}
-              src={game.avatar}
-              alt={`number guessing game ${game.username}`}
-            />
-          </ListItem>
-        )
-      )}
+        </ListItem>
+      ))}
     </List>
   );
+
+  return !user ? noGamesView : gamesExistView;
 }
 
 export default GameList;

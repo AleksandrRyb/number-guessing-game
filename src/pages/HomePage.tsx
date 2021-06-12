@@ -44,72 +44,71 @@ function HomePage({ f7router }: any) {
     }
   }, [user]);
 
+  const noUserTitle = (
+    <SkeletonText tag="div" effect="wave" className="title">
+      Number Guessing Game
+    </SkeletonText>
+  );
+  const title = <NavTitle>Number Guessing Game</NavTitle>;
+
+  const noUserProfileTitle = (
+    <SkeletonText
+      tag="div"
+      effect="wave"
+      style={{ borderRadius: "10px" }}
+      className="block-title block-title-large"
+    >
+      Player Profile
+    </SkeletonText>
+  );
+  const profileTitle = <BlockTitle large>Player Profile</BlockTitle>;
+
+  const noUserStartGameButton = (
+    <SkeletonBlock
+      tag="button"
+      width="145px"
+      height="36px"
+      borderRadius="5px"
+      effect="wave"
+      className="display-inline-block"
+      style={{ border: "none" }}
+    />
+  );
+  const startGameButton = (
+    <Button className="display-inline-block" fill text="start the game" />
+  );
+
+  const noUserLogOutButton = (
+    <SkeletonBlock
+      tag="button"
+      width="80px"
+      height="36px"
+      borderRadius="5px"
+      effect="wave"
+      className="margin-right"
+      style={{ border: "none" }}
+    />
+  );
+
+  const logOutButton = (
+    <Button
+      onClick={() => dispatch(logOut())}
+      text="Logout"
+      fill
+      className="margin-right"
+    />
+  );
+
   return (
     <Page className="main">
       <Navbar>
-        {!user ? (
-          <SkeletonText tag="div" effect="wave" className="title">
-            Number Guessing Game
-          </SkeletonText>
-        ) : (
-          <NavTitle>Number Guessing Game</NavTitle>
-        )}
-        <NavRight>
-          {!user ? (
-            <SkeletonBlock
-              tag="button"
-              width="80px"
-              height="36px"
-              borderRadius="5px"
-              effect="wave"
-              className="margin-right"
-              style={{ border: "none" }}
-            />
-          ) : (
-            <Button
-              onClick={() => dispatch(logOut())}
-              text="Logout"
-              fill
-              className="margin-right"
-            />
-          )}
-        </NavRight>
+        {!user ? noUserTitle : title}
+        <NavRight>{!user ? noUserLogOutButton : logOutButton}</NavRight>
       </Navbar>
       <PageContent className="text-align-center">
-        {!user ? (
-          <SkeletonText
-            tag="div"
-            effect="wave"
-            style={{ borderRadius: "10px" }}
-            className="block-title block-title-large"
-          >
-            Player Profile
-          </SkeletonText>
-        ) : (
-          <BlockTitle large>Player Profile</BlockTitle>
-        )}
-
+        {!user ? noUserProfileTitle : profileTitle}
         <ProfileCard profile={profile} />
-
-        <div>
-          {!user ? (
-            <SkeletonBlock
-              tag="button"
-              width="145px"
-              height="36px"
-              borderRadius="5px"
-              effect="wave"
-              className="display-inline-block"
-              style={{ border: "none" }}
-            />
-          ) : (
-            <Button
-              className="display-inline-block"
-              fill
-              text="start the game"
-            />
-          )}
-        </div>
+        <div>{!user ? noUserStartGameButton : startGameButton}</div>
         <GameList user={user} />
       </PageContent>
     </Page>

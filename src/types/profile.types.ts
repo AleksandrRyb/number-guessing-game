@@ -8,3 +8,7 @@ export type Profile = {
   loses: number;
   created: Date;
 };
+
+export type IProfile = {
+  profile: Profile | null;
+};

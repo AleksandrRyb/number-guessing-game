@@ -3,7 +3,7 @@ import { Profile } from "./profile.types";
 export type Invite = {
   id: string;
   sendFrom: Profile;
-  sendToEmail: string;
+  sendTo: string;
   gameUrl: string;
   message: string;
   joined: boolean;

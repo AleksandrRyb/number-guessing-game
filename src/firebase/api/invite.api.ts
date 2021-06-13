@@ -1,6 +1,7 @@
 import firebase from "firebase/app";
 import { Profile } from "../../types/profile.types";
 import { firebaseApp } from "../init";
+import { Invite } from "../../types/invite.types";
 
 const db = firebaseApp.firestore();
 
@@ -10,7 +11,7 @@ export async function createInvite(
   gameUrl: string,
   message: string
 ) {
-  const response = await db.collection("invites").add({
+  const documentRef = await db.collection("invites").add({
     sendFrom,
     sendTo,
     gameUrl,
@@ -20,5 +21,32 @@ export async function createInvite(
     created: firebase.firestore.FieldValue.serverTimestamp(),
   });
 
-  return response.id;
+  return documentRef.id;
+}
+
+export function subscribeToInvites(
+  sendTo: string,
+  profile: Profile,
+  callback: () => Invite[]
+) {
+  return db
+    .collection("invites")
+    .where("sendTo", "==", profile.email)
+    .where("isReceived", "==", false)
+    .orderBy("created", "desc")
+    .onSnapshot(callback);
+}
+
+export async function replyToInvite(inviteId: string, joined: boolean) {
+  const response = await db
+    .collection("invites")
+    .doc(inviteId)
+    .update({
+      isReceived: true,
+      joined,
+    })
+    .then(() => true)
+    .catch(() => false);
+
+  return response;
 }

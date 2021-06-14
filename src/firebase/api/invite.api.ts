@@ -25,15 +25,16 @@ export async function createInvite(
 }
 
 export function subscribeToInvites(
-  sendTo: string,
   profile: Profile,
-  callback: () => Invite[]
+  callback: {
+    next: (querySnapshot: firebase.firestore.QuerySnapshot) => void;
+  }
 ) {
   return db
     .collection("invites")
     .where("sendTo", "==", profile.email)
     .where("isReceived", "==", false)
-    .orderBy("created", "desc")
+    .orderBy("created", "asc")
     .onSnapshot(callback);
 }
 

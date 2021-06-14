@@ -19,12 +19,12 @@ export function* inviteSendSaga(): SagaIterator {
       message
     );
 
-    if (response) {
-      yield put(actionCreators.inviteSendSuccess());
+    if (!response) {
+      yield put(actionCreators.inviteSendFailure());
       return;
     }
 
-    yield put(actionCreators.inviteSendFailure());
+    yield put(actionCreators.inviteSendSuccess());
   }
 }
 
@@ -32,28 +32,28 @@ export function* inviteReceiveSaga(): SagaIterator {
   while (true) {
     const { payload: invite } = yield take(types.INVITE_RECIEVE);
 
-    if (invite) {
-      yield put(actionCreators.inviteReceiveSuccess(invite));
+    if (!invite) {
+      yield put(actionCreators.inviteReceiveFailure());
       return;
     }
 
-    yield put(actionCreators.inviteReceiveFailure());
+    yield put(actionCreators.inviteReceiveSuccess(invite));
   }
 }
 
 export function* inviteReplySaga(): SagaIterator {
   while (true) {
     const {
-      payload: { inviteId, joined },
+      payload: { inviteId, joined, gameUrl },
     } = yield take(types.INVITE_REPLY);
 
     const response = yield call(db.replyToInvite, inviteId, joined);
 
-    if (response) {
-      yield put(actionCreators.inviteReplySuccess());
+    if (!response) {
+      yield put(actionCreators.inviteReplyFailure());
       return;
     }
 
-    yield put(actionCreators.inviteReplyFailure());
+    yield put(actionCreators.inviteReplySuccess(gameUrl));
   }
 }

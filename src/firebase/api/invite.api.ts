@@ -1,6 +1,7 @@
 import firebase from "firebase/app";
 import { Profile } from "../../types/profile.types";
 import { firebaseApp } from "../init";
+import { FIREBASE_COLLECTIONS } from "../collections";
 import { Invite } from "../../types/invite.types";
 
 const db = firebaseApp.firestore();
@@ -11,7 +12,7 @@ export async function createInvite(
   gameUrl: string,
   message: string
 ) {
-  const newInviteRef = await db.collection("invites").add({
+  const newInviteRef = await db.collection(FIREBASE_COLLECTIONS.INVITES).add({
     sendFrom,
     sendTo,
     gameUrl,
@@ -31,7 +32,7 @@ export function subscribeToInvites(
   }
 ) {
   return db
-    .collection("invites")
+    .collection(FIREBASE_COLLECTIONS.INVITES)
     .where("sendTo", "==", profile.email)
     .where("isReceived", "==", false)
     .orderBy("created", "asc")
@@ -40,7 +41,7 @@ export function subscribeToInvites(
 
 export async function replyToInvite(inviteId: string, joined: boolean) {
   const inviteReply = await db
-    .collection("invites")
+    .collection(FIREBASE_COLLECTIONS.INVITES)
     .doc(inviteId)
     .update({
       isReceived: true,

@@ -1,11 +1,12 @@
 import firebase from "firebase/app";
 import { firebaseApp } from "../init";
 import { Profile } from "../../types/profile.types";
+import { FIREBASE_COLLECTIONS } from "../collections";
 
 const db = firebaseApp.firestore();
 
 export async function createGame(profile: Profile) {
-  const newGameRef = await db.collection("games").add({
+  const newGameRef = await db.collection(FIREBASE_COLLECTIONS.GAMES).add({
     owner: profile,
     gameState: "creating",
   });
@@ -15,9 +16,9 @@ export async function createGame(profile: Profile) {
 
 export async function addPlayerToGame(profile: Profile, gameId: string) {
   const newPlayerRef = await db
-    .collection("games")
+    .collection(FIREBASE_COLLECTIONS.GAMES)
     .doc(gameId)
-    .collection("players")
+    .collection(FIREBASE_COLLECTIONS.PLAYERS)
     .add({
       profile,
       gameId,

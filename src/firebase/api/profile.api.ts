@@ -1,11 +1,12 @@
 import firebase from "firebase/app";
 import { firebaseApp } from "../init";
+import { FIREBASE_COLLECTIONS } from "../collections";
 
 const db = firebaseApp.firestore();
 
 export async function getProfile(user: firebase.User) {
   const profileSnapshot = await db
-    .collection("profiles")
+    .collection(FIREBASE_COLLECTIONS.PROFILES)
     .where("userId", "==", user.uid)
     .get();
 
@@ -19,7 +20,7 @@ export async function getProfile(user: firebase.User) {
   }
 
   const { uid, displayName, photoURL, email } = user;
-  const profileRef = await db.collection("profiles").add({
+  const profileRef = await db.collection(FIREBASE_COLLECTIONS.PROFILES).add({
     userId: uid,
     name: displayName,
     avatar: photoURL,
@@ -37,7 +38,7 @@ export async function getProfile(user: firebase.User) {
 
 export async function updateProfile(profileId: string, isWinner: boolean) {
   const updatedProfile = await db
-    .collection("profiles")
+    .collection(FIREBASE_COLLECTIONS.PROFILES)
     .doc(profileId)
     .update({
       [isWinner ? "wins" : "loses"]: firebase.firestore.FieldValue.increment(1),

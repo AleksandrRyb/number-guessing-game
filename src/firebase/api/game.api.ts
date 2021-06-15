@@ -5,16 +5,16 @@ import { Profile } from "../../types/profile.types";
 const db = firebaseApp.firestore();
 
 export async function createGame(profile: Profile) {
-  const documentRef = await db.collection("games").add({
+  const newGameRef = await db.collection("games").add({
     owner: profile,
     gameState: "creating",
   });
 
-  return documentRef.id;
+  return newGameRef.id;
 }
 
 export async function addPlayerToGame(profile: Profile, gameId: string) {
-  const documentRef = await db
+  const newPlayerRef = await db
     .collection("games")
     .doc(gameId)
     .collection("players")
@@ -25,5 +25,5 @@ export async function addPlayerToGame(profile: Profile, gameId: string) {
       guessed: 0,
     });
 
-  return documentRef.id;
+  return newPlayerRef.id;
 }

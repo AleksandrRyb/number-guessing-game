@@ -4,33 +4,33 @@ import { firebaseApp } from "../init";
 const db = firebaseApp.firestore();
 
 export async function getProfile(user: firebase.User) {
-  const snapshot = await db
+  const profileSnapshot = await db
     .collection("profiles")
     .where("userId", "==", user.uid)
     .get();
 
-  if (snapshot.size !== 0) {
+  if (profileSnapshot.size !== 0) {
     const profile = {
-      id: snapshot.docs[0].id,
-      ...snapshot.docs[0].data(),
+      id: profileSnapshot.docs[0].id,
+      ...profileSnapshot.docs[0].data(),
     };
 
     return profile;
   }
 
   const { uid, displayName, photoURL, email } = user;
-  const documentRef = await db.collection("profiles").add({
+  const profileRef = await db.collection("profiles").add({
     userId: uid,
     name: displayName,
     avatar: photoURL,
-    documentRef: firebase.firestore.FieldValue.serverTimestamp(),
+    created: firebase.firestore.FieldValue.serverTimestamp(),
     email: email,
     wins: 0,
     loses: 0,
   });
   const newProfile = {
-    id: documentRef.id,
-    ...(await documentRef.get()).data(),
+    id: profileRef.id,
+    ...(await profileRef.get()).data(),
   };
   return newProfile;
 }

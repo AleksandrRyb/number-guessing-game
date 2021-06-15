@@ -56,7 +56,7 @@ function GameList({ user }: User) {
     </List>
   );
 
-  return !user ? noGamesView : gamesExistView;
+  return user ? gamesExistView : noGamesView;
 }
 
 export default GameList;

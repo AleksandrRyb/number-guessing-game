@@ -194,13 +194,13 @@ function HomePage({ f7router }: any) {
   return (
     <Page className="main">
       <Navbar>
-        {!profile ? noUserTitle : title}
-        <NavRight>{!profile ? noUserLogOutButton : logOutButton}</NavRight>
+        {profile ? title : noUserTitle}
+        <NavRight>{profile ? logOutButton : noUserLogOutButton}</NavRight>
       </Navbar>
       <PageContent className="text-align-center">
-        {!profile ? noUserProfileTitle : profileTitle}
+        {profile ? profileTitle : noUserProfileTitle}
         <ProfileCard profile={profile} />
-        <div>{!profile ? noUserStartGameButton : startGameButton}</div>
+        <div>{profile ? startGameButton : noUserStartGameButton}</div>
         <GameList user={user} />
       </PageContent>
       {invitePopower}

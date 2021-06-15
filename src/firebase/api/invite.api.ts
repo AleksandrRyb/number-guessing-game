@@ -11,7 +11,7 @@ export async function createInvite(
   gameUrl: string,
   message: string
 ) {
-  const documentRef = await db.collection("invites").add({
+  const newInviteRef = await db.collection("invites").add({
     sendFrom,
     sendTo,
     gameUrl,
@@ -21,7 +21,7 @@ export async function createInvite(
     created: firebase.firestore.FieldValue.serverTimestamp(),
   });
 
-  return documentRef.id;
+  return newInviteRef.id;
 }
 
 export function subscribeToInvites(
@@ -39,7 +39,7 @@ export function subscribeToInvites(
 }
 
 export async function replyToInvite(inviteId: string, joined: boolean) {
-  const response = await db
+  const inviteReply = await db
     .collection("invites")
     .doc(inviteId)
     .update({
@@ -49,5 +49,5 @@ export async function replyToInvite(inviteId: string, joined: boolean) {
     .then(() => true)
     .catch(() => false);
 
-  return response;
+  return inviteReply;
 }

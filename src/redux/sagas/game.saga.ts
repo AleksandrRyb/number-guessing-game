@@ -1,3 +1,4 @@
+import { END } from "redux-saga";
 import { take, put, call } from "redux-saga/effects";
 import { SagaIterator } from "@redux-saga/types";
 
@@ -11,12 +12,12 @@ export function* gameCreateSaga(): SagaIterator {
     const { payload: profile } = yield take(types.CREATE_GAME_REQUEST);
     const response = yield call(db.createGame, profile);
 
-    if (!response) {
-      yield put(actionCreators.createGameFailure());
+    if (response) {
+      yield put(actionCreators.createGameSuccess(response));
       return;
     }
 
-    yield put(actionCreators.createGameSuccess(response));
+    yield put(actionCreators.createGameFailure());
   }
 }
 
@@ -27,11 +28,11 @@ export function* joinToGameSaga(): SagaIterator {
     } = yield take(types.JOIN_TO_GAME_REQUEST);
     const response = yield call(db.addPlayerToGame, profile, gameId);
 
-    if (!response) {
-      yield put(actionCreators.joinToGameFailure());
+    if (response) {
+      yield put(actionCreators.joinToGameSuccess());
       return;
     }
 
-    yield put(actionCreators.joinToGameSuccess());
+    yield put(actionCreators.joinToGameFailure());
   }
 }

@@ -2,6 +2,12 @@ import { all } from "redux-saga/effects";
 
 import { userLoginSaga, userListeningSaga, userLogOut } from "./user.sagas";
 import { getProfileSaga, updateProfileSaga } from "./profile.sagas";
+import {
+  inviteSendSaga,
+  inviteReceiveSaga,
+  inviteReplySaga,
+} from "./invite.sagas";
+import { gameCreateSaga, joinToGameSaga } from "./game.saga";
 
 export function* rootSaga() {
   try {
@@ -11,6 +17,11 @@ export function* rootSaga() {
       userLogOut(),
       getProfileSaga(),
       updateProfileSaga(),
+      gameCreateSaga(),
+      joinToGameSaga(),
+      inviteSendSaga(),
+      inviteReceiveSaga(),
+      inviteReplySaga(),
     ]);
   } catch (error) {
     console.log("→ error caught", error);

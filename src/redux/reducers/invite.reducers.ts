@@ -3,13 +3,21 @@ import { InviteActions } from "../actions/invite.actions";
 import { Invite } from "../../types/invite.types";
 
 interface InviteState {
-  isFetchingInvite: boolean;
+  isSendingInvite: boolean;
+  inviteFetchingPopup: boolean;
+  isListeningInvites: boolean;
+  inviteReplying: boolean;
   invite: Invite | null;
+  gameToRedirect: string | null;
 }
 
 const initialState: InviteState = {
-  isFetchingInvite: false,
+  isSendingInvite: false,
+  inviteFetchingPopup: false,
+  isListeningInvites: true,
+  inviteReplying: false,
   invite: null,
+  gameToRedirect: null,
 };
 
 function inviteReducer(
@@ -20,48 +28,50 @@ function inviteReducer(
     case types.INVITE_SEND:
       return {
         ...state,
-        isFetchingInvite: true,
+        isSendingInvite: true,
       };
     case types.INVITE_SEND_SUCCESS:
       return {
         ...state,
-        isFetchingInvite: false,
+        isSendingInvite: false,
       };
     case types.INVITE_SEND_FAILURE:
       return {
         ...state,
-        isFetchingInvite: false,
+        isSendingInvite: false,
       };
     case types.INVITE_RECIEVE:
       return {
         ...state,
-        isFetchingInvite: true,
+        isListeningInvites: false,
       };
     case types.INVITE_RECIEVE_SUCCESS:
       return {
         ...state,
         invite: action.payload,
-        isFetchingInvite: false,
+        inviteFetchingPopup: true,
       };
     case types.INVITE_RECIEVE_FAILURE:
       return {
         ...state,
-        isFetchingInvite: false,
       };
     case types.INVITE_REPLY:
       return {
         ...state,
-        isFetchingInvite: true,
+        inviteReplying: true,
       };
     case types.INVITE_REPLY_SUCCESS:
       return {
         ...state,
-        isFetchingInvite: false,
+        inviteReplying: false,
+        inviteFetchingPopup: false,
+        isListeningInvites: false,
+        invite: null,
+        gameToRedirect: action.payload,
       };
     case types.INVITE_REPLY_FAILURE:
       return {
         ...state,
-        isFetchingInvite: false,
       };
     default:
       return state;

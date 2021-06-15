@@ -51,17 +51,21 @@ export function inviteReceiveFailure(): actions.InviteReceiveFailureAction {
 
 export function inviteReply(
   inviteId: string,
-  joined: boolean
+  joined: boolean,
+  gameUrl: string | null
 ): actions.InviteReplyAction {
   return {
     type: types.INVITE_REPLY,
-    payload: { inviteId, joined },
+    payload: { inviteId, joined, gameUrl },
   };
 }
 
-export function inviteReplySuccess(): actions.InviteReplySuccessAction {
+export function inviteReplySuccess(
+  gameUrl: string
+): actions.InviteReplySuccessAction {
   return {
     type: types.INVITE_REPLY_SUCCESS,
+    payload: gameUrl,
   };
 }
 

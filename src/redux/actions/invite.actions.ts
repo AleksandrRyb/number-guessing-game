@@ -36,11 +36,12 @@ export interface InviteReceiveFailureAction {
 
 export interface InviteReplyAction {
   type: types.INVITE_REPLY;
-  payload: { inviteId: string; joined: boolean };
+  payload: { inviteId: string; joined: boolean; gameUrl: string | null };
 }
 
 export interface InviteReplySuccessAction {
   type: types.INVITE_REPLY_SUCCESS;
+  payload: string;
 }
 
 export interface InviteReplyFailureAction {

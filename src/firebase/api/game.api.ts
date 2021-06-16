@@ -8,10 +8,18 @@ const db = firebaseApp.firestore();
 export async function createGame(profile: Profile) {
   const newGameRef = await db.collection(FIREBASE_COLLECTIONS.GAMES).add({
     owner: profile,
+    created: firebase.firestore.FieldValue.serverTimestamp(),
     gameState: "creating",
   });
 
-  return newGameRef.id;
+  if (newGameRef.id) {
+    const gameSnapshot = await db
+      .collection(FIREBASE_COLLECTIONS.GAMES)
+      .doc(newGameRef.id)
+      .get();
+    const gameData = { id: gameSnapshot.id, ...gameSnapshot.data() };
+    return gameData;
+  }
 }
 
 export async function addPlayerToGame(profile: Profile, gameId: string) {
@@ -20,11 +28,26 @@ export async function addPlayerToGame(profile: Profile, gameId: string) {
     .doc(gameId)
     .collection(FIREBASE_COLLECTIONS.PLAYERS)
     .add({
-      profile,
+      profileId: profile.id,
+      profile: profile,
       gameId,
+      created: firebase.firestore.FieldValue.serverTimestamp(),
       movePoints: 10,
       guessed: 0,
     });
 
   return newPlayerRef.id;
+}
+
+export function subscribeToPlayers(
+  gameId: string,
+  callback: {
+    next: (querySnapshot: firebase.firestore.QuerySnapshot) => void;
+  }
+) {
+  db.collection(FIREBASE_COLLECTIONS.GAMES)
+    .doc(gameId)
+    .collection(FIREBASE_COLLECTIONS.PLAYERS)
+    .orderBy("created", "desc")
+    .onSnapshot(callback);
 }

@@ -16,7 +16,7 @@ function MainApp() {
 
   React.useEffect(() => {
     return checkAuth((subscribe) => {
-      if (isListening) {
+      if (isListening && !user) {
         dispatch(userListening(subscribe));
       }
     });

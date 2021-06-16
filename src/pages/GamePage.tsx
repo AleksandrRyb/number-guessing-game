@@ -2,7 +2,12 @@ import React from "react";
 import { useActions } from "../hooks/use-action.hooks";
 import { useTypedSelector } from "../hooks/use-typed-selector.hooks";
 import { inviteSend } from "../redux/action-creators/invite.action-creators";
-import { joinToGameRequest } from "../redux/action-creators/game.action-creators";
+import {
+  joinToGameRequest,
+  subscribeToPlayersRequest,
+} from "../redux/action-creators/game.action-creators";
+import * as db from "../firebase/api/game.api";
+import { PlayerSnapshot } from "../types/game.types";
 
 import "../styles/gamepage.css";
 
@@ -24,22 +29,6 @@ import {
 import PlayerMessage from "../components/PlayerMessage";
 import Player from "../components/Player";
 
-const players = [
-  {
-    avatar: "https://i.imgflip.com/13ga6y.jpg",
-    username: "john snow",
-    userId: "fsg9s9gr9dug9uwgh",
-    score: 2,
-  },
-  {
-    avatar:
-      "https://www.meme-arsenal.com/memes/22cabae738382238ae798d49707b4b30.jpg",
-    username: "daenerys targaryen",
-    userId: "sg9s9gr9dfrgrgh",
-    score: 2,
-  },
-];
-
 const DEFAULT_INVITE_FORM = {
   email: "",
   message: "",
@@ -48,14 +37,40 @@ const DEFAULT_INVITE_FORM = {
 function GamePage({ f7route }: any) {
   const dispatch = useActions();
   const { profile } = useTypedSelector((state) => state.profile);
-  const { gameId } = useTypedSelector((state) => state.game);
+  const { players, isPlayersListening, isJoininigGame } = useTypedSelector(
+    (state) => state.game
+  );
   const { isSendingInvite } = useTypedSelector((state) => state.invite);
   const [inviteForm, setInviteForm] = React.useState(DEFAULT_INVITE_FORM);
   const [openInvitePopover, setOpenInvitePopover] = React.useState(false);
 
   React.useEffect(() => {
-    if (profile) dispatch(joinToGameRequest(profile, f7route.params.gameId));
-  }, [profile]);
+    if (profile && !isJoininigGame) {
+      db.subscribeToPlayers(f7route.params.gameId, {
+        next: (querySnapshot) => {
+          const players = querySnapshot.docs.map((doc) => {
+            const data = doc.data() as PlayerSnapshot;
+            return { id: doc.id, ...data };
+          });
+
+          if (players) {
+            dispatch(subscribeToPlayersRequest(players));
+          }
+        },
+      });
+    }
+  }, [profile, isJoininigGame]);
+
+  React.useEffect(() => {
+    if (profile && !isPlayersListening) {
+      if (
+        players.length == 0 ||
+        !players.some((player) => player.profile.id === profile.id)
+      ) {
+        dispatch(joinToGameRequest(profile, f7route.params.gameId));
+      }
+    }
+  }, [profile, isPlayersListening]);
 
   function handleInviteChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
@@ -84,15 +99,14 @@ function GamePage({ f7route }: any) {
       </Navbar>
       <PageContent className="text-align-center">
         <BlockTitle large>Players List</BlockTitle>
-        <Card className="display-inline-block">
-          <CardContent padding={false}>
-            <List>
-              {players.map((player) => (
-                <Player key={player.userId} player={player} />
-              ))}
-            </List>
-          </CardContent>
-        </Card>
+        <div
+          className="display-flex justify-content-start"
+          style={{ margin: "0 auto ", flexWrap: "wrap" }}
+        >
+          {players.map((player) => (
+            <Player key={player.id} player={player} />
+          ))}
+        </div>
       </PageContent>
 
       <Popover

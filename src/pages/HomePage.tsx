@@ -44,7 +44,7 @@ function HomePage({ f7router }: any) {
     gameToRedirect,
     isListeningInvites,
   } = useTypedSelector((state) => state.invite);
-  const { gameId } = useTypedSelector((state) => state.game);
+  const { game } = useTypedSelector((state) => state.game);
 
   React.useEffect(() => {
     if (!user && !isListening) {
@@ -60,15 +60,15 @@ function HomePage({ f7router }: any) {
 
   React.useEffect(() => {
     //Reditect to game when you create it.
-    if (gameId) {
-      f7router.navigate(`/game/${gameId}`);
+    if (game) {
+      f7router.navigate(`/game/${game.id}`);
     }
 
     //Redirect to game when you join it.
     if (gameToRedirect) {
       f7router.navigate(gameToRedirect);
     }
-  }, [gameId, gameToRedirect]);
+  }, [game, gameToRedirect]);
 
   React.useEffect(() => {
     //Listening for new messages, and get the newest one

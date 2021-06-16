@@ -5,9 +5,11 @@ import { inviteSend } from "../redux/action-creators/invite.action-creators";
 import {
   joinToGameRequest,
   subscribeToPlayersRequest,
+  subscribeToGameRequest,
+  gameStartRequest,
 } from "../redux/action-creators/game.action-creators";
 import * as db from "../firebase/api/game.api";
-import { PlayerSnapshot } from "../types/game.types";
+import { PlayerSnapshot, GameSnapshot } from "../types/game.types";
 
 import "../styles/gamepage.css";
 
@@ -21,9 +23,6 @@ import {
   Block,
   PageContent,
   BlockTitle,
-  List,
-  Card,
-  CardContent,
   Popover,
 } from "framework7-react";
 import PlayerMessage from "../components/PlayerMessage";
@@ -37,15 +36,39 @@ const DEFAULT_INVITE_FORM = {
 function GamePage({ f7route }: any) {
   const dispatch = useActions();
   const { profile } = useTypedSelector((state) => state.profile);
-  const { players, isPlayersListening, isJoininigGame } = useTypedSelector(
-    (state) => state.game
-  );
+  const { players, isPlayersListening, game, isListeningGame, isJoiningGame } =
+    useTypedSelector((state) => state.game);
   const { isSendingInvite } = useTypedSelector((state) => state.invite);
   const [inviteForm, setInviteForm] = React.useState(DEFAULT_INVITE_FORM);
   const [openInvitePopover, setOpenInvitePopover] = React.useState(false);
 
   React.useEffect(() => {
-    if (profile && !isJoininigGame) {
+    if (profile && isListeningGame) {
+      db.subscribeToGame(f7route.params.gameId, {
+        next: (snapshot) => {
+          const game = {
+            id: snapshot.id,
+            ...(snapshot.data() as GameSnapshot),
+          };
+          dispatch(subscribeToGameRequest(game));
+        },
+      });
+    }
+  }, [profile]);
+
+  React.useEffect(() => {
+    if (profile && !isPlayersListening) {
+      if (
+        players.length == 0 ||
+        !players.some((player) => player.profile.id === profile.id)
+      ) {
+        dispatch(joinToGameRequest(profile, f7route.params.gameId));
+      }
+    }
+  }, [profile, isPlayersListening]);
+
+  React.useEffect(() => {
+    if (profile && isPlayersListening && !isJoiningGame) {
       db.subscribeToPlayers(f7route.params.gameId, {
         next: (querySnapshot) => {
           const players = querySnapshot.docs.map((doc) => {
@@ -59,18 +82,7 @@ function GamePage({ f7route }: any) {
         },
       });
     }
-  }, [profile, isJoininigGame]);
-
-  React.useEffect(() => {
-    if (profile && !isPlayersListening) {
-      if (
-        players.length == 0 ||
-        !players.some((player) => player.profile.id === profile.id)
-      ) {
-        dispatch(joinToGameRequest(profile, f7route.params.gameId));
-      }
-    }
-  }, [profile, isPlayersListening]);
+  }, [profile]);
 
   function handleInviteChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
@@ -85,6 +97,20 @@ function GamePage({ f7route }: any) {
     }
   }
 
+  const startButton = (
+    <Button
+      className="margin-left"
+      onClick={() =>
+        dispatch(
+          gameStartRequest(f7route.params.gameId, players[0], players[1])
+        )
+      }
+      fillMd
+      colorTheme="green"
+      text="Start Game"
+    />
+  );
+
   return (
     <Page className="game">
       <Navbar>
@@ -94,6 +120,9 @@ function GamePage({ f7route }: any) {
             fillMd
             text="Invite Player"
           />
+          {game?.owner.id === profile?.id && players.length >= 2
+            ? startButton
+            : null}
         </NavRight>
         <NavTitle>Game</NavTitle>
       </Navbar>
@@ -108,7 +137,6 @@ function GamePage({ f7route }: any) {
           ))}
         </div>
       </PageContent>
-
       <Popover
         closeByOutsideClick={false}
         closeByBackdropClick={false}

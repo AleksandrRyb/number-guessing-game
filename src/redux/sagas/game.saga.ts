@@ -1,6 +1,6 @@
 //@ts-nocheck
 import { eventChannel } from "redux-saga";
-import { take, put, call } from "redux-saga/effects";
+import { take, put, call, cancel } from "redux-saga/effects";
 import { SagaIterator } from "@redux-saga/types";
 import { PlayerSnapshot } from "../../types/game.types";
 
@@ -44,8 +44,42 @@ export function* subscribeToPlayersSaga(): SagaIterator {
     const { payload: players } = yield take(types.SUBSCRIBE_TO_PLAYERS_REQUEST);
     if (!players) {
       yield put(actionCreators.subscribeToPlayersFailure());
-      break;
+      return;
     }
     yield put(actionCreators.subscribeToPlayersSuccess(players));
+  }
+}
+
+export function* subscribeToGameSaga(): SagaIterator {
+  while (true) {
+    const { payload: game } = yield take(types.SUBSCRIBE_TO_GAME_REQUEST);
+    if (!game) {
+      yield put(actionCreators.subscribeToGameFailure());
+      break;
+    }
+
+    yield put(actionCreators.subscribeToGameSuccess(game));
+  }
+}
+
+export function* gameStartSaga(): SagaIterator {
+  while (true) {
+    const {
+      payload: { gameId, currentPlayer, nextPlayer },
+    } = yield take(types.GAME_START_REQUEST);
+
+    const response = yield call(
+      db.startGame,
+      gameId,
+      currentPlayer,
+      nextPlayer
+    );
+
+    if (response) {
+      yield put(actionCreators.gameStartSuccess());
+      return;
+    }
+
+    yield put(actionCreators.gameStartFailure());
   }
 }

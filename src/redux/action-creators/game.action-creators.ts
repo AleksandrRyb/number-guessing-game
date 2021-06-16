@@ -70,3 +70,50 @@ export function subscribeToPlayersFailure(): actions.SubscribeToPlayersFailureAc
     type: types.SUBSCRIBE_TO_PLAYERS_FAILURE,
   };
 }
+
+export function subscribeToGameRequest(
+  game: Game
+): actions.SubscribeToGameRequestAction {
+  return {
+    type: types.SUBSCRIBE_TO_GAME_REQUEST,
+    payload: game,
+  };
+}
+
+export function subscribeToGameSuccess(
+  game: Game
+): actions.SubscribeToGameSuccessAction {
+  return {
+    type: types.SUBSCRIBE_TO_GAME_SUCCESS,
+    payload: game,
+  };
+}
+
+export function subscribeToGameFailure(): actions.SubscribeToGameFailureAction {
+  return {
+    type: types.SUBSCRIBE_TO_GAME_FAILURE,
+  };
+}
+
+export function gameStartRequest(
+  gameId: string,
+  currentPlayer: Player,
+  nextPlayer: Player
+): actions.GameStartRequestAction {
+  return {
+    type: types.GAME_START_REQUEST,
+    payload: { gameId, currentPlayer, nextPlayer },
+  };
+}
+
+export function gameStartSuccess(): actions.GameStartSuccessAction {
+  return {
+    type: types.GAME_START_SUCCESS,
+  };
+}
+
+export function gameStartFailure(): actions.GameStartFailureAction {
+  return {
+    type: types.GAME_START_FAILURE,
+  };
+}

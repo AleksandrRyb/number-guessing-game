@@ -3,7 +3,15 @@ import { Profile } from "./profile.types";
 export type Game = {
   id: string;
   owner: Profile;
-  gameState: "creating" | "started" | "done";
+  stages: "creating" | "in-progress" | "done" | "closed";
+  gameState: GameState;
+  created: Date;
+};
+
+export type GameSnapshot = {
+  owner: Profile;
+  stages: "creating" | "in-progress" | "done" | "closed";
+  gameState: GameState;
   created: Date;
 };
 
@@ -29,3 +37,9 @@ export type Player = {
 export interface IPlayer {
   player: Player;
 }
+
+export type GameState = {
+  currentPlayer: Player;
+  nextPlayer: Player;
+  isEven: boolean;
+};

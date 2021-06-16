@@ -2,23 +2,25 @@ import { GameActionTypes as types } from "../action-types/game.action-types";
 import { GameActions } from "../actions/game.actions";
 import { Game, Player } from "../../types/game.types";
 
-interface GameState {
+interface GameRoomState {
   game: Game | null;
   isFetchingGame: boolean;
   players: Player[] | [];
+  isJoiningGame: boolean;
   isPlayersListening: boolean;
-  isJoininigGame: boolean;
+  isListeningGame: boolean;
 }
 
 const initialState = {
   game: null,
   isFetchingGame: false,
   players: [],
+  isJoiningGame: false,
   isPlayersListening: true,
-  isJoininigGame: false,
+  isListeningGame: true,
 };
 
-function gameReducer(state: GameState = initialState, action: GameActions) {
+function gameReducer(state: GameRoomState = initialState, action: GameActions) {
   switch (action.type) {
     case types.CREATE_GAME_REQUEST:
       return {
@@ -39,22 +41,23 @@ function gameReducer(state: GameState = initialState, action: GameActions) {
     case types.JOIN_TO_GAME_REQUEST:
       return {
         ...state,
-        isJoininigGame: true,
+        isPlayersListening: false,
+        isJoiningGame: true,
       };
     case types.JOIN_TO_GAME_SUCCESS:
       return {
         ...state,
-        isJoininigGame: false,
+        isPlayersListening: true,
+        isJoiningGame: false,
       };
     case types.JOIN_TO_GAME_FAILURE:
       return {
         ...state,
-        isJoininigGame: false,
+        isJoiningGame: false,
       };
     case types.SUBSCRIBE_TO_PLAYERS_REQUEST:
       return {
         ...state,
-        isPlayersListening: true,
       };
     case types.SUBSCRIBE_TO_PLAYERS_SUCCESS:
       return {
@@ -67,6 +70,39 @@ function gameReducer(state: GameState = initialState, action: GameActions) {
         ...state,
         isPlayersListening: false,
       };
+    case types.SUBSCRIBE_TO_GAME_REQUEST:
+      return {
+        ...state,
+      };
+    case types.SUBSCRIBE_TO_GAME_SUCCESS: {
+      return {
+        ...state,
+        game: action.payload,
+      };
+    }
+    case types.SUBSCRIBE_TO_GAME_FAILURE: {
+      return {
+        ...state,
+      };
+    }
+    case types.GAME_START_REQUEST: {
+      return {
+        ...state,
+        isListeningGame: false,
+      };
+    }
+    case types.GAME_START_SUCCESS: {
+      return {
+        ...state,
+        isListeningGame: true,
+      };
+    }
+    case types.GAME_START_FAILURE: {
+      return {
+        ...state,
+        isListeningGame: true,
+      };
+    }
     default:
       return state;
   }

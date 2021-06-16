@@ -1,6 +1,6 @@
 import { GameActionTypes as types } from "../action-types/game.action-types";
 import { Profile } from "../../types/profile.types";
-import { Player, Game } from "../../types/game.types";
+import { Player, Game, GameState } from "../../types/game.types";
 
 export interface CreateGameRequestAction {
   type: types.CREATE_GAME_REQUEST;
@@ -42,6 +42,33 @@ export interface SubscribeToPlayersFailureAction {
   type: types.SUBSCRIBE_TO_PLAYERS_FAILURE;
 }
 
+export interface SubscribeToGameRequestAction {
+  type: types.SUBSCRIBE_TO_GAME_REQUEST;
+  payload: Game;
+}
+
+export interface SubscribeToGameSuccessAction {
+  type: types.SUBSCRIBE_TO_GAME_SUCCESS;
+  payload: Game;
+}
+
+export interface SubscribeToGameFailureAction {
+  type: types.SUBSCRIBE_TO_GAME_FAILURE;
+}
+
+export interface GameStartRequestAction {
+  type: types.GAME_START_REQUEST;
+  payload: { gameId: string; currentPlayer: Player; nextPlayer: Player };
+}
+
+export interface GameStartSuccessAction {
+  type: types.GAME_START_SUCCESS;
+}
+
+export interface GameStartFailureAction {
+  type: types.GAME_START_FAILURE;
+}
+
 export type GameActions =
   | CreateGameRequestAction
   | CreateGameFailureAction
@@ -51,4 +78,10 @@ export type GameActions =
   | JoinToGameFailureAction
   | SubscribeToPlayersRequestAction
   | SubscribeToPlayersSuccessAction
-  | SubscribeToPlayersFailureAction;
+  | SubscribeToPlayersFailureAction
+  | SubscribeToGameRequestAction
+  | SubscribeToGameSuccessAction
+  | SubscribeToGameFailureAction
+  | GameStartRequestAction
+  | GameStartSuccessAction
+  | GameStartFailureAction;

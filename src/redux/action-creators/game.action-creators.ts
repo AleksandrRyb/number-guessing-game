@@ -1,6 +1,6 @@
 import { GameActionTypes as types } from "../action-types/game.action-types";
 import { Profile } from "../../types/profile.types";
-import { Player, Game } from "../../types/game.types";
+import { Player, Game, GameState } from "../../types/game.types";
 import * as actions from "../actions/game.actions";
 
 export function createGameRequest(
@@ -95,25 +95,24 @@ export function subscribeToGameFailure(): actions.SubscribeToGameFailureAction {
   };
 }
 
-export function gameStartRequest(
+export function updateGameStateRequest(
   gameId: string,
-  currentPlayer: Player,
-  nextPlayer: Player
-): actions.GameStartRequestAction {
+  gameState: GameState
+): actions.UpdateGameStateRequestAction {
   return {
-    type: types.GAME_START_REQUEST,
-    payload: { gameId, currentPlayer, nextPlayer },
+    type: types.UPDATE_GAME_STATE_REQUEST,
+    payload: { gameId, gameState },
   };
 }
 
-export function gameStartSuccess(): actions.GameStartSuccessAction {
+export function updateGameStateSuccess(): actions.UpdateGameStateSuccessAction {
   return {
-    type: types.GAME_START_SUCCESS,
+    type: types.UPDATE_GAME_STATE_SUCCESS,
   };
 }
 
-export function gameStartFailure(): actions.GameStartFailureAction {
+export function updateGameStateFailure(): actions.UpdateGameStateFailureAction {
   return {
-    type: types.GAME_START_FAILURE,
+    type: types.UPDATE_GAME_STATE_FAILURE,
   };
 }

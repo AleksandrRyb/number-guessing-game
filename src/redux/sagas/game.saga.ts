@@ -62,24 +62,20 @@ export function* subscribeToGameSaga(): SagaIterator {
   }
 }
 
-export function* gameStartSaga(): SagaIterator {
+export function* updateGameStateSaga(): SagaIterator {
   while (true) {
     const {
-      payload: { gameId, currentPlayer, nextPlayer },
-    } = yield take(types.GAME_START_REQUEST);
+      payload: { gameId, gameState },
+    } = yield take(types.UPDATE_GAME_STATE_REQUEST);
+    console.log(gameState);
 
-    const response = yield call(
-      db.startGame,
-      gameId,
-      currentPlayer,
-      nextPlayer
-    );
+    const response = yield call(db.updateGameState, gameId, gameState);
 
-    if (response) {
-      yield put(actionCreators.gameStartSuccess());
+    if (!response) {
+      yield put(actionCreators.updateGameStateFailure());
       return;
     }
 
-    yield put(actionCreators.gameStartFailure());
+    yield put(actionCreators.updateGameStateSuccess());
   }
 }

@@ -56,17 +56,17 @@ export interface SubscribeToGameFailureAction {
   type: types.SUBSCRIBE_TO_GAME_FAILURE;
 }
 
-export interface GameStartRequestAction {
-  type: types.GAME_START_REQUEST;
-  payload: { gameId: string; currentPlayer: Player; nextPlayer: Player };
+export interface UpdateGameStateRequestAction {
+  type: types.UPDATE_GAME_STATE_REQUEST;
+  payload: { gameId: string; gameState: GameState };
 }
 
-export interface GameStartSuccessAction {
-  type: types.GAME_START_SUCCESS;
+export interface UpdateGameStateSuccessAction {
+  type: types.UPDATE_GAME_STATE_SUCCESS;
 }
 
-export interface GameStartFailureAction {
-  type: types.GAME_START_FAILURE;
+export interface UpdateGameStateFailureAction {
+  type: types.UPDATE_GAME_STATE_FAILURE;
 }
 
 export type GameActions =
@@ -82,6 +82,6 @@ export type GameActions =
   | SubscribeToGameRequestAction
   | SubscribeToGameSuccessAction
   | SubscribeToGameFailureAction
-  | GameStartRequestAction
-  | GameStartSuccessAction
-  | GameStartFailureAction;
+  | UpdateGameStateRequestAction
+  | UpdateGameStateSuccessAction
+  | UpdateGameStateFailureAction;

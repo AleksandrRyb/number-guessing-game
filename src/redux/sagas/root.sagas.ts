@@ -12,7 +12,7 @@ import {
   joinToGameSaga,
   subscribeToPlayersSaga,
   subscribeToGameSaga,
-  gameStartSaga,
+  updateGameStateSaga,
 } from "./game.saga";
 
 export function* rootSaga() {
@@ -30,7 +30,7 @@ export function* rootSaga() {
       inviteReplySaga(),
       subscribeToPlayersSaga(),
       subscribeToGameSaga(),
-      gameStartSaga(),
+      updateGameStateSaga(),
     ]);
   } catch (error) {
     console.log("→ error caught", error);

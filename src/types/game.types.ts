@@ -41,5 +41,5 @@ export interface IPlayer {
 export type GameState = {
   currentPlayer: Player;
   nextPlayer: Player;
-  isEven: boolean;
+  isEven: boolean | null;
 };

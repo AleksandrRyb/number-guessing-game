@@ -6,7 +6,7 @@ import {
   joinToGameRequest,
   subscribeToPlayersRequest,
   subscribeToGameRequest,
-  gameStartRequest,
+  updateGameStateRequest,
 } from "../redux/action-creators/game.action-creators";
 import * as db from "../firebase/api/game.api";
 import { PlayerSnapshot, GameSnapshot } from "../types/game.types";
@@ -65,7 +65,7 @@ function GamePage({ f7route }: any) {
         },
       });
     }
-  }, [profile]);
+  }, [profile, isListeningGame]);
 
   React.useEffect(() => {
     if (profile && !isPlayersListening) {
@@ -113,14 +113,19 @@ function GamePage({ f7route }: any) {
   }
 
   function handleGuessingNumberSumbit() {
-    //get submitted value and understand is even ot or not
-    //Update db game.gameState.isEven on true or false
-    console.log(guessingNumber);
+    const isEven = guessingNumber && guessingNumber % 2 === 0;
+
+    if (game?.gameState !== undefined) {
+      const { currentPlayer, nextPlayer } = game.gameState;
+      const newGameState = { currentPlayer, nextPlayer, isEven };
+      //@ts-ignore
+      dispatch(updateGameStateRequest(f7route.params.gameId, newGameState));
+    }
+
     setMakeGuessPopover(false);
   }
 
   function handleGuessIsEven(isEven: boolean) {
-    console.log(isEven);
     setGuessingPopover(false);
     //after press we need understand  correct answer or not
     //update current player move_point -1
@@ -133,7 +138,11 @@ function GamePage({ f7route }: any) {
       className="margin-left"
       onClick={() =>
         dispatch(
-          gameStartRequest(f7route.params.gameId, players[0], players[1])
+          updateGameStateRequest(f7route.params.gameId, {
+            currentPlayer: players[0],
+            nextPlayer: players[1],
+            isEven: null,
+          })
         )
       }
       fillMd
@@ -187,7 +196,7 @@ function GamePage({ f7route }: any) {
       }
       {
         <GuessingForm
-          isEven={false}
+          isEven={game?.gameState.isEven}
           openGuessingPopover={openGuessingPopover}
           handleGuessIsEven={handleGuessIsEven}
         />

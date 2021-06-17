@@ -85,19 +85,19 @@ function gameReducer(state: GameRoomState = initialState, action: GameActions) {
         ...state,
       };
     }
-    case types.GAME_START_REQUEST: {
+    case types.UPDATE_GAME_STATE_REQUEST: {
       return {
         ...state,
         isListeningGame: false,
       };
     }
-    case types.GAME_START_SUCCESS: {
+    case types.UPDATE_GAME_STATE_SUCCESS: {
       return {
         ...state,
         isListeningGame: true,
       };
     }
-    case types.GAME_START_FAILURE: {
+    case types.UPDATE_GAME_STATE_FAILURE: {
       return {
         ...state,
         isListeningGame: true,

@@ -1,7 +1,7 @@
 import firebase from "firebase/app";
 import { firebaseApp } from "../init";
 import { Profile } from "../../types/profile.types";
-import { Player } from "../../types/game.types";
+import { Player, GameState } from "../../types/game.types";
 import { FIREBASE_COLLECTIONS } from "../collections";
 
 const db = firebaseApp.firestore();
@@ -82,23 +82,35 @@ export function subscribeToGame(
   db.collection(FIREBASE_COLLECTIONS.GAMES).doc(gameId).onSnapshot(callback);
 }
 
-export async function startGame(
-  gameId: string,
-  currentPlayer: Player,
-  nextPlayer: Player
-) {
-  const gameDocumentRef = await db
+export async function updateGameState(gameId: string, gameState: GameState) {
+  const gameStateResponse = await db
     .collection(FIREBASE_COLLECTIONS.GAMES)
     .doc(gameId)
     .update({
       stages: "in-progress",
       gameState: {
-        currentPlayer,
-        nextPlayer,
+        ...gameState,
       },
     })
     .then(() => true)
     .catch(() => false);
 
-  return gameDocumentRef;
+  return gameStateResponse;
+}
+
+export async function updatePlayers(
+  gameId: string,
+  playerId: string,
+  field: number
+) {
+  await db
+    .collection(FIREBASE_COLLECTIONS.GAMES)
+    .doc(gameId)
+    .collection(FIREBASE_COLLECTIONS.PLAYERS)
+    .doc(playerId)
+    .update({
+      field,
+    })
+    .then(() => true)
+    .catch(() => false);
 }

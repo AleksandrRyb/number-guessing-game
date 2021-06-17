@@ -19,12 +19,12 @@ import {
   NavRight,
   Button,
   Page,
-  Input,
-  Block,
   PageContent,
   BlockTitle,
-  Popover,
 } from "framework7-react";
+import MakeGuessForm from "../components/notifications/MakeGuessForm";
+import GuessingForm from "../components/notifications/GuessingForm";
+import InviteForm from "../components/notifications/InviteForm";
 import PlayerMessage from "../components/PlayerMessage";
 import Player from "../components/Player";
 
@@ -41,6 +41,10 @@ function GamePage({ f7route }: any) {
   const { isSendingInvite } = useTypedSelector((state) => state.invite);
   const [inviteForm, setInviteForm] = React.useState(DEFAULT_INVITE_FORM);
   const [openInvitePopover, setOpenInvitePopover] = React.useState(false);
+  const [openMakeGuessPopover, setMakeGuessPopover] = React.useState(false);
+  const [openGuessingPopover, setGuessingPopover] = React.useState(false);
+  const [guessingNumber, setGuessingNumber] =
+    React.useState<null | number>(null);
 
   React.useEffect(() => {
     if (profile && isListeningGame) {
@@ -51,6 +55,13 @@ function GamePage({ f7route }: any) {
             ...(snapshot.data() as GameSnapshot),
           };
           dispatch(subscribeToGameRequest(game));
+
+          if (game.gameState.currentPlayer?.profileId === profile.id) {
+            setMakeGuessPopover(true);
+          }
+          if (game.gameState.nextPlayer?.profileId === profile.id) {
+            setGuessingPopover(true);
+          }
         },
       });
     }
@@ -76,7 +87,7 @@ function GamePage({ f7route }: any) {
             return { id: doc.id, ...data };
           });
 
-          if (players) {
+          if (players && !isJoiningGame) {
             dispatch(subscribeToPlayersRequest(players));
           }
         },
@@ -95,6 +106,26 @@ function GamePage({ f7route }: any) {
       dispatch(inviteSend(profile, email, f7route.url, message));
       setInviteForm(DEFAULT_INVITE_FORM);
     }
+  }
+
+  function handleGuessingNumberChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setGuessingNumber(Number(e.target.value));
+  }
+
+  function handleGuessingNumberSumbit() {
+    //get submitted value and understand is even ot or not
+    //Update db game.gameState.isEven on true or false
+    console.log(guessingNumber);
+    setMakeGuessPopover(false);
+  }
+
+  function handleGuessIsEven(isEven: boolean) {
+    console.log(isEven);
+    setGuessingPopover(false);
+    //after press we need understand  correct answer or not
+    //update current player move_point -1
+    //update score of next_player if he guessed
+    //Change next player to current and understand who will next
   }
 
   const startButton = (
@@ -137,53 +168,30 @@ function GamePage({ f7route }: any) {
           ))}
         </div>
       </PageContent>
-      <Popover
-        closeByOutsideClick={false}
-        closeByBackdropClick={false}
-        opened={openInvitePopover}
-      >
-        <Block>
-          <BlockTitle medium className="text-align-center">
-            Send Email
-          </BlockTitle>
-          <Input
-            onChange={handleInviteChange}
-            name="email"
-            value={inviteForm.email}
-            style={{ padding: "7px 0 7px 0px" }}
-            className="margin-bottom"
-            placeholder="Email"
-            outline
-            type="email"
-          />
-          <Input
-            onChange={handleInviteChange}
-            name="message"
-            value={inviteForm.message}
-            style={{ padding: "7px 0 7px 0px" }}
-            className="margin-bottom"
-            placeholder="Message"
-            outline
-            type="text"
-          />
-          <div className="display-flex justify-content-space-around align-items-center">
-            <Button
-              onClick={() => setOpenInvitePopover(false)}
-              className="color-yellow"
-              fillMd
-              text="Cancel"
-            />
-            <Button
-              onClick={handleInviteSubmit}
-              disabled={isSendingInvite}
-              loading={isSendingInvite}
-              className="color-green"
-              fillMd
-              text="Send Invite"
-            />
-          </div>
-        </Block>
-      </Popover>
+      {
+        <InviteForm
+          openInvitePopover={openInvitePopover}
+          setOpenInvitePopover={setOpenInvitePopover}
+          handleInviteChange={handleInviteChange}
+          inviteForm={inviteForm}
+          handleInviteSubmit={handleInviteSubmit}
+          isSendingInvite={isSendingInvite}
+        />
+      }
+      {
+        <MakeGuessForm
+          handleGuessingNumberChange={handleGuessingNumberChange}
+          handleGuessingNumberSumbit={handleGuessingNumberSumbit}
+          openMakeGuessPopover={openMakeGuessPopover}
+        />
+      }
+      {
+        <GuessingForm
+          isEven={false}
+          openGuessingPopover={openGuessingPopover}
+          handleGuessIsEven={handleGuessIsEven}
+        />
+      }
     </Page>
   );
 }

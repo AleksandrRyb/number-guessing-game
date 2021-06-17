@@ -1,6 +1,6 @@
 //@ts-nocheck
 import { eventChannel } from "redux-saga";
-import { take, put, call, cancel } from "redux-saga/effects";
+import { take, put, call } from "redux-saga/effects";
 import { SagaIterator } from "@redux-saga/types";
 import { PlayerSnapshot } from "../../types/game.types";
 

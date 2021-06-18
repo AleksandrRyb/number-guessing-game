@@ -1,12 +1,9 @@
 //@ts-nocheck
-import { eventChannel } from "redux-saga";
 import { take, put, call } from "redux-saga/effects";
 import { SagaIterator } from "@redux-saga/types";
-import { PlayerSnapshot } from "../../types/game.types";
 
 import { GameActionTypes as types } from "../action-types/game.action-types";
 import * as actionCreators from "../action-creators/game.action-creators";
-import { GameActions } from "../actions/game.actions";
 import * as db from "../../firebase/api/game.api";
 
 export function* gameCreateSaga(): SagaIterator {
@@ -67,7 +64,6 @@ export function* updateGameStateSaga(): SagaIterator {
     const {
       payload: { gameId, gameState },
     } = yield take(types.UPDATE_GAME_STATE_REQUEST);
-    console.log(gameState);
 
     const response = yield call(db.updateGameState, gameId, gameState);
 
@@ -77,5 +73,36 @@ export function* updateGameStateSaga(): SagaIterator {
     }
 
     yield put(actionCreators.updateGameStateSuccess());
+  }
+}
+
+export function* updatePlayersSaga(): SagaIterator {
+  while (true) {
+    const {
+      payload: { currentPlayer, nextPlayer, newGameState },
+    } = yield take(types.UPDATE_PLAYER_REQUEST);
+    //Minus 1 movepoint from guesse maker
+    yield call(db.updatePlayer, currentPlayer.gameId, currentPlayer.id, {
+      movePoints: currentPlayer.movePoints,
+    });
+
+    //Increase or decrease guess points of guesser player
+    yield call(db.updatePlayer, nextPlayer.gameId, nextPlayer.id, {
+      guessed: nextPlayer.guessed,
+    });
+
+    //Change pair of next and current, nextplayer becomes current and newNext becomes next
+    const response = yield call(
+      db.updateGameState,
+      newGameState.currentPlayer.gameId,
+      newGameState
+    );
+
+    if (!response) {
+      yield put(actionCreators.updatePlayersFailure());
+      return;
+    }
+
+    yield put(actionCreators.updatePlayersSuccess());
   }
 }

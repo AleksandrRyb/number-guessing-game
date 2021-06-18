@@ -1,39 +1,45 @@
 //@ts-nocheck
 import React from "react";
-import { Popover, BlockTitle, Block, Button, Input } from "framework7-react";
+import { BlockTitle, Block, Button, Input, Preloader } from "framework7-react";
 
 function MakeGuessForm({
+  isGameStateUpdating,
   handleGuessingNumberChange,
   handleGuessingNumberSumbit,
   openMakeGuessPopover,
+  isEven,
 }) {
   return (
-    <Popover
-      closeByOutsideClick={false}
-      closeByBackdropClick={false}
-      opened={openMakeGuessPopover}
-    >
+    <>
       <BlockTitle medium className="text-align-center">
-        Make a number guess
+        {isEven === null
+          ? "Make a number guess."
+          : "Waiting for your opponent response."}
       </BlockTitle>
-      <Block>
-        <Input
-          onChange={handleGuessingNumberChange}
-          placeholder="1053854"
-          style={{ padding: "7px 0 7px 0px" }}
-          className="margin-bottom"
-          outline
-          type="number"
-        />
-        <Button
-          onClick={handleGuessingNumberSumbit}
-          type="button"
-          fillMd
-          colorTheme="green"
-          text="Submit"
-        />
-      </Block>
-    </Popover>
+      {isEven === null ? (
+        <Block>
+          <Input
+            onChange={handleGuessingNumberChange}
+            placeholder="1053854"
+            style={{ padding: "7px 0 7px 0px" }}
+            className="margin-bottom"
+            outline
+            type="number"
+          />
+          <Button
+            onClick={handleGuessingNumberSumbit}
+            type="button"
+            fillMd
+            colorTheme="green"
+            text="Submit"
+          />
+        </Block>
+      ) : (
+        <Block className="text-align-center">
+          <Preloader colotTheme="blue" />
+        </Block>
+      )}
+    </>
   );
 }
 

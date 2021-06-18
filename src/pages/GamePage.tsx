@@ -7,9 +7,14 @@ import {
   subscribeToPlayersRequest,
   subscribeToGameRequest,
   updateGameStateRequest,
+  updatePlayersRequest,
 } from "../redux/action-creators/game.action-creators";
 import * as db from "../firebase/api/game.api";
-import { PlayerSnapshot, GameSnapshot } from "../types/game.types";
+import {
+  PlayerSnapshot,
+  GameSnapshot,
+  Player as PlayerType,
+} from "../types/game.types";
 
 import "../styles/gamepage.css";
 
@@ -21,11 +26,11 @@ import {
   Page,
   PageContent,
   BlockTitle,
+  Popover,
 } from "framework7-react";
 import MakeGuessForm from "../components/notifications/MakeGuessForm";
 import GuessingForm from "../components/notifications/GuessingForm";
 import InviteForm from "../components/notifications/InviteForm";
-import PlayerMessage from "../components/PlayerMessage";
 import Player from "../components/Player";
 
 const DEFAULT_INVITE_FORM = {
@@ -36,13 +41,17 @@ const DEFAULT_INVITE_FORM = {
 function GamePage({ f7route }: any) {
   const dispatch = useActions();
   const { profile } = useTypedSelector((state) => state.profile);
-  const { players, isPlayersListening, game, isListeningGame, isJoiningGame } =
-    useTypedSelector((state) => state.game);
+  const {
+    players,
+    isPlayersListening,
+    game,
+    isListeningGame,
+    isJoiningGame,
+    isGameStateUpdating,
+  } = useTypedSelector((state) => state.game);
   const { isSendingInvite } = useTypedSelector((state) => state.invite);
   const [inviteForm, setInviteForm] = React.useState(DEFAULT_INVITE_FORM);
   const [openInvitePopover, setOpenInvitePopover] = React.useState(false);
-  const [openMakeGuessPopover, setMakeGuessPopover] = React.useState(false);
-  const [openGuessingPopover, setGuessingPopover] = React.useState(false);
   const [guessingNumber, setGuessingNumber] =
     React.useState<null | number>(null);
 
@@ -55,13 +64,6 @@ function GamePage({ f7route }: any) {
             ...(snapshot.data() as GameSnapshot),
           };
           dispatch(subscribeToGameRequest(game));
-
-          if (game.gameState.currentPlayer?.profileId === profile.id) {
-            setMakeGuessPopover(true);
-          }
-          if (game.gameState.nextPlayer?.profileId === profile.id) {
-            setGuessingPopover(true);
-          }
         },
       });
     }
@@ -118,19 +120,54 @@ function GamePage({ f7route }: any) {
     if (game?.gameState !== undefined) {
       const { currentPlayer, nextPlayer } = game.gameState;
       const newGameState = { currentPlayer, nextPlayer, isEven };
-      //@ts-ignore
+      // @ts-ignore
       dispatch(updateGameStateRequest(f7route.params.gameId, newGameState));
     }
-
-    setMakeGuessPopover(false);
   }
 
-  function handleGuessIsEven(isEven: boolean) {
-    setGuessingPopover(false);
-    //after press we need understand  correct answer or not
-    //update current player move_point -1
-    //update score of next_player if he guessed
-    //Change next player to current and understand who will next
+  function handleGuessIsEven(response: boolean) {
+    let currentPlayer = game?.gameState.currentPlayer;
+    let nextPlayer = game?.gameState.nextPlayer;
+    if (nextPlayer !== undefined && currentPlayer !== undefined) {
+      currentPlayer.movePoints--;
+      nextPlayer.guessed =
+        response === game?.gameState.isEven
+          ? nextPlayer.guessed + 1
+          : nextPlayer.guessed;
+      const newNextPlayer = findNewNextPlayer(
+        players,
+        nextPlayer,
+        currentPlayer
+      );
+
+      const newGameState = {
+        currentPlayer: nextPlayer,
+        nextPlayer: newNextPlayer,
+        isEven: null,
+      };
+      dispatch(updatePlayersRequest(currentPlayer, nextPlayer, newGameState));
+    }
+  }
+
+  function findNewNextPlayer(
+    players: PlayerType[],
+    nextPlayer: PlayerType,
+    currentPlayer: PlayerType
+  ) {
+    let newNextPlayer;
+    const index = players.findIndex((player) => player.id === nextPlayer.id);
+
+    if (index + 1 >= players.length) {
+      newNextPlayer = players[0];
+    } else {
+      newNextPlayer = players[index + 1];
+    }
+
+    if (newNextPlayer.id === currentPlayer.id) {
+      newNextPlayer.movePoints -= 1;
+    }
+
+    return newNextPlayer;
   }
 
   const startButton = (
@@ -151,6 +188,17 @@ function GamePage({ f7route }: any) {
     />
   );
 
+  const renderMakeGuessForm =
+    game?.stages === "in-progress" &&
+    profile?.id === game?.gameState.currentPlayer?.profileId
+      ? true
+      : false;
+
+  const renderGuessingForm =
+    game?.stages === "in-progress" &&
+    profile?.id === game?.gameState.nextPlayer?.profileId
+      ? true
+      : false;
   return (
     <Page className="game">
       <Navbar>
@@ -177,6 +225,29 @@ function GamePage({ f7route }: any) {
           ))}
         </div>
       </PageContent>
+      <Popover
+        closeByOutsideClick={false}
+        closeByBackdropClick={false}
+        opened={renderMakeGuessForm || renderGuessingForm}
+      >
+        {renderMakeGuessForm && (
+          <MakeGuessForm
+            isGameStateUpdating={isGameStateUpdating}
+            handleGuessingNumberChange={handleGuessingNumberChange}
+            handleGuessingNumberSumbit={handleGuessingNumberSumbit}
+            isEven={game?.gameState.isEven}
+            openMakeGuessPopover={renderMakeGuessForm}
+          />
+        )}
+        {renderGuessingForm && (
+          <GuessingForm
+            isGameStateUpdating={isGameStateUpdating}
+            handleGuessIsEven={handleGuessIsEven}
+            isEven={game?.gameState.isEven}
+            openGuessingPopover={renderGuessingForm}
+          />
+        )}
+      </Popover>
       {
         <InviteForm
           openInvitePopover={openInvitePopover}
@@ -185,20 +256,6 @@ function GamePage({ f7route }: any) {
           inviteForm={inviteForm}
           handleInviteSubmit={handleInviteSubmit}
           isSendingInvite={isSendingInvite}
-        />
-      }
-      {
-        <MakeGuessForm
-          handleGuessingNumberChange={handleGuessingNumberChange}
-          handleGuessingNumberSumbit={handleGuessingNumberSumbit}
-          openMakeGuessPopover={openMakeGuessPopover}
-        />
-      }
-      {
-        <GuessingForm
-          isEven={game?.gameState.isEven}
-          openGuessingPopover={openGuessingPopover}
-          handleGuessIsEven={handleGuessIsEven}
         />
       }
     </Page>

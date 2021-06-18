@@ -69,6 +69,23 @@ export interface UpdateGameStateFailureAction {
   type: types.UPDATE_GAME_STATE_FAILURE;
 }
 
+export interface UpdatePlayersRequestAction {
+  type: types.UPDATE_PLAYER_REQUEST;
+  payload: {
+    currentPlayer: Player;
+    nextPlayer: Player;
+    newGameState: GameState;
+  };
+}
+
+export interface UpdatePlayersSuccessAction {
+  type: types.UPDATE_PLAYER_SUCCESS;
+}
+
+export interface UpdatePlayersFailureAction {
+  type: types.UPDATE_PLAYER_FAILURE;
+}
+
 export type GameActions =
   | CreateGameRequestAction
   | CreateGameFailureAction
@@ -84,4 +101,7 @@ export type GameActions =
   | SubscribeToGameFailureAction
   | UpdateGameStateRequestAction
   | UpdateGameStateSuccessAction
-  | UpdateGameStateFailureAction;
+  | UpdateGameStateFailureAction
+  | UpdatePlayersRequestAction
+  | UpdatePlayersSuccessAction
+  | UpdatePlayersFailureAction;

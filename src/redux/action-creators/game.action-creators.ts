@@ -116,3 +116,30 @@ export function updateGameStateFailure(): actions.UpdateGameStateFailureAction {
     type: types.UPDATE_GAME_STATE_FAILURE,
   };
 }
+
+export function updatePlayersRequest(
+  currentPlayer: Player,
+  nextPlayer: Player,
+  newGameState: GameState
+): actions.UpdatePlayersRequestAction {
+  return {
+    type: types.UPDATE_PLAYER_REQUEST,
+    payload: {
+      currentPlayer,
+      nextPlayer,
+      newGameState,
+    },
+  };
+}
+
+export function updatePlayersSuccess(): actions.UpdatePlayersSuccessAction {
+  return {
+    type: types.UPDATE_PLAYER_SUCCESS,
+  };
+}
+
+export function updatePlayersFailure(): actions.UpdatePlayersFailureAction {
+  return {
+    type: types.UPDATE_PLAYER_FAILURE,
+  };
+}

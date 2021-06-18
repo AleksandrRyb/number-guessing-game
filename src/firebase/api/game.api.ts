@@ -98,19 +98,21 @@ export async function updateGameState(gameId: string, gameState: GameState) {
   return gameStateResponse;
 }
 
-export async function updatePlayers(
+export async function updatePlayer(
   gameId: string,
   playerId: string,
-  field: number
+  field: { key: number }
 ) {
-  await db
+  const playerUpdateResponse = await db
     .collection(FIREBASE_COLLECTIONS.GAMES)
     .doc(gameId)
     .collection(FIREBASE_COLLECTIONS.PLAYERS)
     .doc(playerId)
     .update({
-      field,
+      ...field,
     })
     .then(() => true)
     .catch(() => false);
+
+  return playerUpdateResponse;
 }

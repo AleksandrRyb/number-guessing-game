@@ -1,20 +1,15 @@
 //@ts-nocheck
 import React from "react";
-import {
-  Popover,
-  BlockTitle,
-  Block,
-  Button,
-  Preloader,
-} from "framework7-react";
+import { BlockTitle, Block, Button, Preloader } from "framework7-react";
 
-function GuessingForm({ openGuessingPopover, handleGuessIsEven, isEven }) {
+function GuessingForm({
+  openGuessingPopover,
+  handleGuessIsEven,
+  isEven,
+  isGameStateUpdating,
+}) {
   return (
-    <Popover
-      closeByOutsideClick={false}
-      closeByBackdropClick={false}
-      opened={openGuessingPopover}
-    >
+    <>
       <BlockTitle medium className="text-align-center">
         {isEven !== null
           ? "Guess is even or odd  number."
@@ -43,7 +38,7 @@ function GuessingForm({ openGuessingPopover, handleGuessIsEven, isEven }) {
           <Preloader color="blue" />
         </Block>
       )}
-    </Popover>
+    </>
   );
 }
 

@@ -1,6 +1,10 @@
 //@ts-nocheck
 import { take, put, call } from "redux-saga/effects";
 import { SagaIterator } from "@redux-saga/types";
+import {
+  findGameLiders,
+  findTotalMovePoints,
+} from "../../helpers/game.helpers";
 
 import { GameActionTypes as types } from "../action-types/game.action-types";
 import * as actionCreators from "../action-creators/game.action-creators";
@@ -39,19 +43,11 @@ export function* joinToGameSaga(): SagaIterator {
 export function* subscribeToPlayersSaga(): SagaIterator {
   while (true) {
     const { payload: players } = yield take(types.SUBSCRIBE_TO_PLAYERS_REQUEST);
+
     if (!players) {
       yield put(actionCreators.subscribeToPlayersFailure());
       return;
     }
-
-    // const totalMovePoints = players.reduce(
-    //   (acc: number, player: PlayerType) => acc + player.movePoints,
-    //   0
-    // );
-
-    // if (players.length > 1 && totalMovePoints === 0) {
-    //   yield call(db.setWinner, players[0]?.gameId);
-    // }
     yield put(actionCreators.subscribeToPlayersSuccess(players));
   }
 }
@@ -76,12 +72,26 @@ export function* updateGameStateSaga(): SagaIterator {
     } = yield take(types.UPDATE_GAME_STATE_REQUEST);
 
     const players = yield call(db.getAllPlayers, gameId);
-    const totalMovePoints = players.reduce(
-      (acc: number, player: PlayerType) => acc + player.movePoints,
-      0
-    );
+    const totalMovePoints = findTotalMovePoints(players);
+    const liders = findGameLiders(players);
 
-    if (players.length > 1 && totalMovePoints === 0) {
+    if (liders.length > 1 && totalMovePoints === 0) {
+      const newGameState = {
+        currentPlayer: liders[0],
+        nextPlayer: liders[1],
+        isEven: null,
+      };
+      const response = yield call(db.updateGameState, gameId, newGameState);
+
+      if (!response) {
+        yield put(actionCreators.updateGameStateFailure());
+        return;
+      }
+
+      yield put(actionCreators.updateGameStateSuccess());
+    }
+
+    if (liders.length === 1 && totalMovePoints <= 0) {
       yield call(db.setWinner, players[0]?.gameId);
       return;
     }
@@ -122,6 +132,9 @@ export function* updatePlayersSaga(): SagaIterator {
       return;
     }
 
+    yield put(
+      actionCreators.updateGameStateRequest(nextPlayer.gameId, newGameState)
+    );
     yield put(actionCreators.updatePlayersSuccess());
   }
 }

@@ -2,6 +2,11 @@
 import React from "react";
 import { useActions } from "../hooks/use-action.hooks";
 import { useTypedSelector } from "../hooks/use-typed-selector.hooks";
+import {
+  findNewNextPlayerWithMoveDecrease,
+  findGameLiders,
+  findTotalMovePoints,
+} from "../helpers/game.helpers";
 import { inviteSend } from "../redux/action-creators/invite.action-creators";
 import {
   joinToGameRequest,
@@ -52,14 +57,17 @@ function GamePage({ f7route, f7router }: any) {
     isListeningGame,
     isJoiningGame,
     isGameStateUpdating,
+    isPlayerUpdating,
   } = useTypedSelector((state) => state.game);
   const { isSendingInvite } = useTypedSelector((state) => state.invite);
   const [inviteForm, setInviteForm] = React.useState(DEFAULT_INVITE_FORM);
   const [openInvitePopover, setOpenInvitePopover] = React.useState(false);
+  const [closeGamePopover, setCloseGamePopover] = React.useState(true);
   const [guessingNumber, setGuessingNumber] =
     React.useState<null | number>(null);
 
   React.useEffect(() => {
+    console.log(f7route);
     if (profile && isListeningGame) {
       db.subscribeToGame(f7route.params.gameId, {
         next: (snapshot) => {
@@ -129,23 +137,8 @@ function GamePage({ f7route, f7router }: any) {
     }
   }
 
-  async function setWinner(players) {
-    const totalMovePoints = players.reduce(
-      (acc: number, player: PlayerType) => acc + player.movePoints,
-      0
-    );
-
-    if (totalMovePoints <= 0 && game?.stages === "in-progress") {
-      //Check players total points
-      const response = await fetch(
-        `http://localhost:5001/number-guessing-game-644c8/us-central1/checkWinner/${game?.id}`
-      )
-        .then((res) => res)
-        .catch((error) => error);
-    }
-  }
-
   function handleGuessIsEven(response: boolean) {
+    const totalMovePoints = findTotalMovePoints(players);
     let currentPlayer = game?.gameState.currentPlayer;
     let nextPlayer = game?.gameState.nextPlayer;
     if (nextPlayer !== undefined && currentPlayer !== undefined) {
@@ -154,8 +147,8 @@ function GamePage({ f7route, f7router }: any) {
         response === game?.gameState.isEven
           ? nextPlayer.guessed + 1
           : nextPlayer.guessed;
-      const newNextPlayer = findNewNextPlayer(
-        players,
+      const newNextPlayer = findNewNextPlayerWithMoveDecrease(
+        totalMovePoints > 0 ? players : findGameLiders(players),
         nextPlayer,
         currentPlayer
       );
@@ -165,29 +158,7 @@ function GamePage({ f7route, f7router }: any) {
         isEven: null,
       };
       dispatch(updatePlayersRequest(currentPlayer, nextPlayer, newGameState));
-      dispatch(updateGameStateRequest(f7route.params.gameId, newGameState));
     }
-  }
-
-  function findNewNextPlayer(
-    players: PlayerType[],
-    nextPlayer: PlayerType,
-    currentPlayer: PlayerType
-  ) {
-    let newNextPlayer;
-    const index = players.findIndex((player) => player.id === nextPlayer.id);
-
-    if (index + 1 >= players.length) {
-      newNextPlayer = players[0];
-    } else {
-      newNextPlayer = players[index + 1];
-    }
-
-    if (newNextPlayer.id === currentPlayer.id) {
-      newNextPlayer.movePoints -= 1;
-    }
-
-    return newNextPlayer;
   }
 
   const startButton = (
@@ -227,18 +198,29 @@ function GamePage({ f7route, f7router }: any) {
   const renderLoserForm =
     game?.stages === "done" && profile.id !== game?.winner.profileId;
 
+  const openPopoverCond =
+    renderMakeGuessForm ||
+    renderGuessingForm ||
+    renderWinnerForm ||
+    renderWaitingForm ||
+    renderLoserForm;
+
   return (
     <Page className="game">
       <Navbar>
         <NavRight className="padding-right">
-          <Button
-            onClick={() => setOpenInvitePopover(true)}
-            fillMd
-            text="Invite Player"
-          />
-          {game?.owner.id === profile?.id && players.length >= 2
-            ? startButton
-            : null}
+          {game?.stages === "creating" && (
+            <Button
+              onClick={() => setOpenInvitePopover(true)}
+              fillMd
+              text="Invite Player"
+            />
+          )}
+
+          {game?.owner.id === profile?.id &&
+            players.length >= 2 &&
+            game?.stages === "creating" &&
+            startButton}
         </NavRight>
         <NavTitle>Game</NavTitle>
       </Navbar>
@@ -256,13 +238,8 @@ function GamePage({ f7route, f7router }: any) {
       <Popover
         closeByOutsideClick={false}
         closeByBackdropClick={false}
-        opened={
-          renderMakeGuessForm ||
-          renderGuessingForm ||
-          renderWinnerForm ||
-          renderWaitingForm ||
-          renderLoserForm
-        }
+        closeOnEscape={true}
+        opened={closeGamePopover && openPopoverCond}
       >
         {renderMakeGuessForm && (
           <MakeGuessForm
@@ -274,15 +251,25 @@ function GamePage({ f7route, f7router }: any) {
         )}
         {renderGuessingForm && (
           <GuessingForm
+            isPlayerUpdating={isPlayerUpdating}
             isGameStateUpdating={isGameStateUpdating}
             handleGuessIsEven={handleGuessIsEven}
             isEven={game?.gameState.isEven}
           />
         )}
         {renderWinnerForm && (
-          <WinnerForm player={game.winner} f7router={f7router} />
+          <WinnerForm
+            player={game.winner}
+            f7router={f7router}
+            setCloseGamePopover={setCloseGamePopover}
+          />
         )}
-        {renderLoserForm && <LoserForm f7router={f7router} />}
+        {renderLoserForm && (
+          <LoserForm
+            setCloseGamePopover={setCloseGamePopover}
+            f7router={f7router}
+          />
+        )}
         {renderWaitingForm && <WaitingForm />}
       </Popover>
       {

@@ -43,7 +43,7 @@ function InviteForm({
         <div className="display-flex justify-content-space-around align-items-center">
           <Button
             onClick={() => setOpenInvitePopover(false)}
-            className="color-yellow"
+            colorTheme="blue"
             fillMd
             text="Cancel"
           />
@@ -51,7 +51,7 @@ function InviteForm({
             onClick={handleInviteSubmit}
             disabled={isSendingInvite}
             loading={isSendingInvite}
-            className="color-green"
+            colorTheme="green"
             fillMd
             text="Send Invite"
           />

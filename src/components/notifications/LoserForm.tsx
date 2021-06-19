@@ -2,7 +2,12 @@
 import React from "react";
 import { BlockTitle, Block, Button } from "framework7-react";
 
-function LoserForm({ f7router }) {
+function LoserForm({ setCloseGamePopover, f7router }) {
+  function closeGame() {
+    setCloseGamePopover(false);
+    f7router.navigate("/");
+  }
+
   return (
     <>
       <BlockTitle medium className="text-align-center">
@@ -10,7 +15,7 @@ function LoserForm({ f7router }) {
       </BlockTitle>
       <Block>
         <Button
-          onClick={() => f7router.navigate("/")}
+          onClick={closeGame}
           type="button"
           text="Home"
           colorTheme="yellow"

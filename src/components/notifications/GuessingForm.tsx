@@ -2,7 +2,12 @@
 import React from "react";
 import { BlockTitle, Block, Button, Preloader } from "framework7-react";
 
-function GuessingForm({ handleGuessIsEven, isEven, isGameStateUpdating }) {
+function GuessingForm({
+  isPlayerUpdating,
+  handleGuessIsEven,
+  isEven,
+  isGameStateUpdating,
+}) {
   return (
     <>
       <BlockTitle medium className="text-align-center">
@@ -19,7 +24,7 @@ function GuessingForm({ handleGuessIsEven, isEven, isGameStateUpdating }) {
             colorTheme="green"
             text="even"
             onClick={() => handleGuessIsEven(true)}
-            disabled={isGameStateUpdating}
+            disabled={isGameStateUpdating || isPlayerUpdating}
           />
           <Button
             type="button"
@@ -27,7 +32,7 @@ function GuessingForm({ handleGuessIsEven, isEven, isGameStateUpdating }) {
             colorTheme="blue"
             text="odd"
             onClick={() => handleGuessIsEven(false)}
-            disabled={isGameStateUpdating}
+            disabled={isGameStateUpdating || isPlayerUpdating}
           />
         </Block>
       ) : (

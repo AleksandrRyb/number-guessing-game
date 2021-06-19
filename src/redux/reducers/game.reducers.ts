@@ -10,6 +10,7 @@ interface GameRoomState {
   isPlayersListening: boolean;
   isListeningGame: boolean;
   isGameStateUpdating: boolean;
+  isPlayerUpdating: boolean;
 }
 
 const initialState = {
@@ -20,6 +21,7 @@ const initialState = {
   isPlayersListening: true,
   isListeningGame: true,
   isGameStateUpdating: false,
+  isPlayerUpdating: false,
 };
 
 function gameReducer(state: GameRoomState = initialState, action: GameActions) {
@@ -112,12 +114,14 @@ function gameReducer(state: GameRoomState = initialState, action: GameActions) {
       return {
         ...state,
         isPlayersListening: false,
+        isPlayerUpdating: true,
       };
     }
     case types.UPDATE_PLAYER_SUCCESS: {
       return {
         ...state,
         isPlayersListening: true,
+        isPlayerUpdating: false,
       };
     }
 
@@ -125,6 +129,7 @@ function gameReducer(state: GameRoomState = initialState, action: GameActions) {
       return {
         ...state,
         isPlayersListening: true,
+        isPlayerUpdating: false,
       };
     }
     default:

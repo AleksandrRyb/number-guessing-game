@@ -3,6 +3,7 @@ import { Profile } from "./profile.types";
 export type Game = {
   id: string;
   owner: Profile;
+  winner: null | Player;
   stages: "creating" | "in-progress" | "done" | "closed";
   gameState: GameState;
   created: Date;
@@ -10,6 +11,7 @@ export type Game = {
 
 export type GameSnapshot = {
   owner: Profile;
+  winner: null | Player;
   stages: "creating" | "in-progress" | "done" | "closed";
   gameState: GameState;
   created: Date;

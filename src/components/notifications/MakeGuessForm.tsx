@@ -6,7 +6,6 @@ function MakeGuessForm({
   isGameStateUpdating,
   handleGuessingNumberChange,
   handleGuessingNumberSumbit,
-  openMakeGuessPopover,
   isEven,
 }) {
   return (
@@ -32,6 +31,7 @@ function MakeGuessForm({
             fillMd
             colorTheme="green"
             text="Submit"
+            disabled={isGameStateUpdating}
           />
         </Block>
       ) : (

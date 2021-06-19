@@ -10,6 +10,7 @@ export async function createGame(profile: Profile) {
   const newGameRef = await db.collection(FIREBASE_COLLECTIONS.GAMES).add({
     owner: profile,
     created: firebase.firestore.FieldValue.serverTimestamp(),
+    winner: null,
     stages: "creating",
     gameState: {
       currentPlayer: null,
@@ -53,7 +54,7 @@ export async function addPlayerToGame(profile: Profile, gameId: string) {
       profile: profile,
       gameId,
       created: firebase.firestore.FieldValue.serverTimestamp(),
-      movePoints: 10,
+      movePoints: 3,
       guessed: 0,
     });
 
@@ -115,4 +116,30 @@ export async function updatePlayer(
     .catch(() => false);
 
   return playerUpdateResponse;
+}
+
+export async function setWinner(gameId: string) {
+  //Check players total points
+  const response = await fetch(
+    `http://localhost:5001/number-guessing-game-644c8/us-central1/checkWinner/${gameId}`
+  )
+    .then((res) => res)
+    .catch((error) => error);
+
+  return response;
+}
+
+export async function getAllPlayers(gameId: string) {
+  const playersSnapshot = await db
+    .collection(FIREBASE_COLLECTIONS.GAMES)
+    .doc(gameId)
+    .collection(FIREBASE_COLLECTIONS.PLAYERS)
+    .get();
+
+  const players = playersSnapshot.docs.map((player) => ({
+    id: player.id,
+    ...player.data(),
+  }));
+
+  return players;
 }

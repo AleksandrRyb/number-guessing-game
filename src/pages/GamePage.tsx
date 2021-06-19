@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from "react";
 import { useActions } from "../hooks/use-action.hooks";
 import { useTypedSelector } from "../hooks/use-typed-selector.hooks";
@@ -31,6 +32,9 @@ import {
 import MakeGuessForm from "../components/notifications/MakeGuessForm";
 import GuessingForm from "../components/notifications/GuessingForm";
 import InviteForm from "../components/notifications/InviteForm";
+import WinnerForm from "../components/notifications/WinnerForm";
+import WaitingForm from "../components/notifications/WaitingForm";
+import LoserForm from "../components/notifications/LoserForm";
 import Player from "../components/Player";
 
 const DEFAULT_INVITE_FORM = {
@@ -38,7 +42,7 @@ const DEFAULT_INVITE_FORM = {
   message: "",
 };
 
-function GamePage({ f7route }: any) {
+function GamePage({ f7route, f7router }: any) {
   const dispatch = useActions();
   const { profile } = useTypedSelector((state) => state.profile);
   const {
@@ -120,8 +124,24 @@ function GamePage({ f7route }: any) {
     if (game?.gameState !== undefined) {
       const { currentPlayer, nextPlayer } = game.gameState;
       const newGameState = { currentPlayer, nextPlayer, isEven };
-      // @ts-ignore
+
       dispatch(updateGameStateRequest(f7route.params.gameId, newGameState));
+    }
+  }
+
+  async function setWinner(players) {
+    const totalMovePoints = players.reduce(
+      (acc: number, player: PlayerType) => acc + player.movePoints,
+      0
+    );
+
+    if (totalMovePoints <= 0 && game?.stages === "in-progress") {
+      //Check players total points
+      const response = await fetch(
+        `http://localhost:5001/number-guessing-game-644c8/us-central1/checkWinner/${game?.id}`
+      )
+        .then((res) => res)
+        .catch((error) => error);
     }
   }
 
@@ -139,13 +159,13 @@ function GamePage({ f7route }: any) {
         nextPlayer,
         currentPlayer
       );
-
       const newGameState = {
         currentPlayer: nextPlayer,
         nextPlayer: newNextPlayer,
         isEven: null,
       };
       dispatch(updatePlayersRequest(currentPlayer, nextPlayer, newGameState));
+      dispatch(updateGameStateRequest(f7route.params.gameId, newGameState));
     }
   }
 
@@ -190,15 +210,23 @@ function GamePage({ f7route }: any) {
 
   const renderMakeGuessForm =
     game?.stages === "in-progress" &&
-    profile?.id === game?.gameState.currentPlayer?.profileId
-      ? true
-      : false;
+    profile?.id === game?.gameState.currentPlayer?.profileId;
 
   const renderGuessingForm =
     game?.stages === "in-progress" &&
-    profile?.id === game?.gameState.nextPlayer?.profileId
-      ? true
-      : false;
+    profile?.id === game?.gameState.nextPlayer?.profileId;
+
+  const renderWaitingForm =
+    game?.stages === "in-progress" &&
+    profile.id !== game?.winner?.profileId &&
+    profile.id !== game?.gameState.currentPlayer.profileId &&
+    profile.id !== game?.gameState.nextPlayer.profileId;
+
+  const renderWinnerForm =
+    game?.stages === "done" && game?.winner.profileId === profile.id;
+  const renderLoserForm =
+    game?.stages === "done" && profile.id !== game?.winner.profileId;
+
   return (
     <Page className="game">
       <Navbar>
@@ -228,7 +256,13 @@ function GamePage({ f7route }: any) {
       <Popover
         closeByOutsideClick={false}
         closeByBackdropClick={false}
-        opened={renderMakeGuessForm || renderGuessingForm}
+        opened={
+          renderMakeGuessForm ||
+          renderGuessingForm ||
+          renderWinnerForm ||
+          renderWaitingForm ||
+          renderLoserForm
+        }
       >
         {renderMakeGuessForm && (
           <MakeGuessForm
@@ -236,7 +270,6 @@ function GamePage({ f7route }: any) {
             handleGuessingNumberChange={handleGuessingNumberChange}
             handleGuessingNumberSumbit={handleGuessingNumberSumbit}
             isEven={game?.gameState.isEven}
-            openMakeGuessPopover={renderMakeGuessForm}
           />
         )}
         {renderGuessingForm && (
@@ -244,9 +277,13 @@ function GamePage({ f7route }: any) {
             isGameStateUpdating={isGameStateUpdating}
             handleGuessIsEven={handleGuessIsEven}
             isEven={game?.gameState.isEven}
-            openGuessingPopover={renderGuessingForm}
           />
         )}
+        {renderWinnerForm && (
+          <WinnerForm player={game.winner} f7router={f7router} />
+        )}
+        {renderLoserForm && <LoserForm f7router={f7router} />}
+        {renderWaitingForm && <WaitingForm />}
       </Popover>
       {
         <InviteForm

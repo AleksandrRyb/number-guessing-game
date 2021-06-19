@@ -43,6 +43,15 @@ export function* subscribeToPlayersSaga(): SagaIterator {
       yield put(actionCreators.subscribeToPlayersFailure());
       return;
     }
+
+    // const totalMovePoints = players.reduce(
+    //   (acc: number, player: PlayerType) => acc + player.movePoints,
+    //   0
+    // );
+
+    // if (players.length > 1 && totalMovePoints === 0) {
+    //   yield call(db.setWinner, players[0]?.gameId);
+    // }
     yield put(actionCreators.subscribeToPlayersSuccess(players));
   }
 }
@@ -50,9 +59,10 @@ export function* subscribeToPlayersSaga(): SagaIterator {
 export function* subscribeToGameSaga(): SagaIterator {
   while (true) {
     const { payload: game } = yield take(types.SUBSCRIBE_TO_GAME_REQUEST);
+
     if (!game) {
       yield put(actionCreators.subscribeToGameFailure());
-      break;
+      return;
     }
 
     yield put(actionCreators.subscribeToGameSuccess(game));
@@ -64,6 +74,17 @@ export function* updateGameStateSaga(): SagaIterator {
     const {
       payload: { gameId, gameState },
     } = yield take(types.UPDATE_GAME_STATE_REQUEST);
+
+    const players = yield call(db.getAllPlayers, gameId);
+    const totalMovePoints = players.reduce(
+      (acc: number, player: PlayerType) => acc + player.movePoints,
+      0
+    );
+
+    if (players.length > 1 && totalMovePoints === 0) {
+      yield call(db.setWinner, players[0]?.gameId);
+      return;
+    }
 
     const response = yield call(db.updateGameState, gameId, gameState);
 
@@ -87,15 +108,13 @@ export function* updatePlayersSaga(): SagaIterator {
     });
 
     //Increase or decrease guess points of guesser player
-    yield call(db.updatePlayer, nextPlayer.gameId, nextPlayer.id, {
-      guessed: nextPlayer.guessed,
-    });
-
-    //Change pair of next and current, nextplayer becomes current and newNext becomes next
     const response = yield call(
-      db.updateGameState,
-      newGameState.currentPlayer.gameId,
-      newGameState
+      db.updatePlayer,
+      nextPlayer.gameId,
+      nextPlayer.id,
+      {
+        guessed: nextPlayer.guessed,
+      }
     );
 
     if (!response) {

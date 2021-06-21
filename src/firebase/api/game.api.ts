@@ -1,7 +1,7 @@
 import firebase from "firebase/app";
 import { firebaseApp } from "../init";
 import { Profile } from "../../types/profile.types";
-import { Player, GameState } from "../../types/game.types";
+import { GameState } from "../../types/game.types";
 import { FIREBASE_COLLECTIONS } from "../collections";
 
 const db = firebaseApp.firestore();
@@ -29,22 +29,18 @@ export async function createGame(profile: Profile) {
   }
 }
 
-// export async function createGameState(gameId: string) {
-//   await db
-//     .collection(FIREBASE_COLLECTIONS.GAMES)
-//     .doc(gameId)
-//     .collection(FIREBASE_COLLECTIONS.GAME_STATE)
-//     .add({
-//       gameId,
-//       stages: "creating",
-//       created: firebase.firestore.FieldValue.serverTimestamp(),
-//       currentPlayer: null,
-//       nextPlayer: null,
-//       isEven: null,
-//     });
-// }
-
 export async function addPlayerToGame(profile: Profile, gameId: string) {
+  const playerDoc = await db
+    .collection(FIREBASE_COLLECTIONS.GAMES)
+    .doc(gameId)
+    .collection(FIREBASE_COLLECTIONS.PLAYERS)
+    .where("profileId", "==", profile.id)
+    .get();
+
+  if (playerDoc.docs.length) {
+    return playerDoc.docs[0].id;
+  }
+
   const newPlayerRef = await db
     .collection(FIREBASE_COLLECTIONS.GAMES)
     .doc(gameId)
@@ -119,7 +115,6 @@ export async function updatePlayer(
 }
 
 export async function setWinner(gameId: string) {
-  //Check players total points
   const response = await fetch(
     `http://localhost:5001/number-guessing-game-644c8/us-central1/checkWinner/${gameId}`
   )

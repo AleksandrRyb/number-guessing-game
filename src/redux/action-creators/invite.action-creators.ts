@@ -74,3 +74,9 @@ export function inviteReplyFailure(): actions.InviteReplyFailureAction {
     type: types.INVITE_REPLY_FAILURE,
   };
 }
+
+export function clearGameRedirection(): actions.ClearGameRedirectionAction {
+  return {
+    type: types.CLEAR_GAME_REDIRECTION,
+  };
+}

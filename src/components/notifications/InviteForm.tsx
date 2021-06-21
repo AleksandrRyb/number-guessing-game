@@ -1,6 +1,7 @@
-//@ts-nocheck
 import React from "react";
 import { Popover, Block, BlockTitle, Input, Button } from "framework7-react";
+
+import { IInviteForm } from "../../types/game.types";
 
 function InviteForm({
   openInvitePopover,
@@ -9,7 +10,7 @@ function InviteForm({
   inviteForm,
   handleInviteSubmit,
   isSendingInvite,
-}) {
+}: IInviteForm) {
   return (
     <Popover
       closeByOutsideClick={false}

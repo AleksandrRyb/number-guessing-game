@@ -86,6 +86,10 @@ export interface UpdatePlayersFailureAction {
   type: types.UPDATE_PLAYER_FAILURE;
 }
 
+export interface LeaveGameAction {
+  type: types.LEAVE_GAME;
+}
+
 export type GameActions =
   | CreateGameRequestAction
   | CreateGameFailureAction
@@ -104,4 +108,5 @@ export type GameActions =
   | UpdateGameStateFailureAction
   | UpdatePlayersRequestAction
   | UpdatePlayersSuccessAction
-  | UpdatePlayersFailureAction;
+  | UpdatePlayersFailureAction
+  | LeaveGameAction;

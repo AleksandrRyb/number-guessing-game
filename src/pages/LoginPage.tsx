@@ -22,6 +22,8 @@ function LoginPage({ f7router }: any) {
     if (user) {
       f7router.navigate("/");
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const authView = (

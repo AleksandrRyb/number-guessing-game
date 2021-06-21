@@ -1,4 +1,3 @@
-//@ts-nocheck
 import React from "react";
 import { useActions } from "../hooks/use-action.hooks";
 import { useTypedSelector } from "../hooks/use-typed-selector.hooks";
@@ -14,13 +13,10 @@ import {
   subscribeToGameRequest,
   updateGameStateRequest,
   updatePlayersRequest,
+  leaveGame,
 } from "../redux/action-creators/game.action-creators";
 import * as db from "../firebase/api/game.api";
-import {
-  PlayerSnapshot,
-  GameSnapshot,
-  Player as PlayerType,
-} from "../types/game.types";
+import { PlayerSnapshot, GameSnapshot } from "../types/game.types";
 
 import "../styles/gamepage.css";
 
@@ -67,7 +63,6 @@ function GamePage({ f7route, f7router }: any) {
     React.useState<null | number>(null);
 
   React.useEffect(() => {
-    console.log(f7route);
     if (profile && isListeningGame) {
       db.subscribeToGame(f7route.params.gameId, {
         next: (snapshot) => {
@@ -79,18 +74,24 @@ function GamePage({ f7route, f7router }: any) {
         },
       });
     }
-  }, [profile, isListeningGame]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile]);
 
   React.useEffect(() => {
-    if (profile && !isPlayersListening) {
+    if (profile) {
       if (
-        players.length == 0 ||
+        players.length === 0 ||
         !players.some((player) => player.profile.id === profile.id)
       ) {
         dispatch(joinToGameRequest(profile, f7route.params.gameId));
       }
     }
-  }, [profile, isPlayersListening]);
+
+    return () => {
+      dispatch(leaveGame());
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [closeGamePopover]);
 
   React.useEffect(() => {
     if (profile && isPlayersListening && !isJoiningGame) {
@@ -107,6 +108,7 @@ function GamePage({ f7route, f7router }: any) {
         },
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile]);
 
   function handleInviteChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -131,9 +133,10 @@ function GamePage({ f7route, f7router }: any) {
 
     if (game?.gameState !== undefined) {
       const { currentPlayer, nextPlayer } = game.gameState;
-      const newGameState = { currentPlayer, nextPlayer, isEven };
-
-      dispatch(updateGameStateRequest(f7route.params.gameId, newGameState));
+      if (isEven === true || isEven === false) {
+        const newGameState = { currentPlayer, nextPlayer, isEven };
+        dispatch(updateGameStateRequest(f7route.params.gameId, newGameState));
+      }
     }
   }
 
@@ -189,14 +192,14 @@ function GamePage({ f7route, f7router }: any) {
 
   const renderWaitingForm =
     game?.stages === "in-progress" &&
-    profile.id !== game?.winner?.profileId &&
-    profile.id !== game?.gameState.currentPlayer.profileId &&
-    profile.id !== game?.gameState.nextPlayer.profileId;
+    profile?.id !== game?.winner?.profileId &&
+    profile?.id !== game?.gameState.currentPlayer.profileId &&
+    profile?.id !== game?.gameState.nextPlayer.profileId;
 
   const renderWinnerForm =
-    game?.stages === "done" && game?.winner.profileId === profile.id;
+    game?.stages === "done" && game?.winner?.profileId === profile?.id;
   const renderLoserForm =
-    game?.stages === "done" && profile.id !== game?.winner.profileId;
+    game?.stages === "done" && profile?.id !== game?.winner?.profileId;
 
   const openPopoverCond =
     renderMakeGuessForm ||
@@ -231,7 +234,12 @@ function GamePage({ f7route, f7router }: any) {
           style={{ margin: "0 auto ", flexWrap: "wrap" }}
         >
           {players.map((player) => (
-            <Player key={player.id} player={player} />
+            <Player
+              key={player.id}
+              player={player}
+              currentPlayerId={game?.gameState.currentPlayer?.id}
+              nextPlayerId={game?.gameState.nextPlayer?.id}
+            />
           ))}
         </div>
       </PageContent>
@@ -259,7 +267,7 @@ function GamePage({ f7route, f7router }: any) {
         )}
         {renderWinnerForm && (
           <WinnerForm
-            player={game.winner}
+            player={game?.winner}
             f7router={f7router}
             setCloseGamePopover={setCloseGamePopover}
           />

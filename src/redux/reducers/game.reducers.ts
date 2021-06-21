@@ -132,6 +132,19 @@ function gameReducer(state: GameRoomState = initialState, action: GameActions) {
         isPlayerUpdating: false,
       };
     }
+
+    case types.LEAVE_GAME: {
+      return {
+        game: null,
+        isFetchingGame: false,
+        players: [],
+        isJoiningGame: false,
+        isPlayersListening: true,
+        isListeningGame: true,
+        isGameStateUpdating: false,
+        isPlayerUpdating: false,
+      };
+    }
     default:
       return state;
   }

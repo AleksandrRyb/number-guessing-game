@@ -59,12 +59,12 @@ function inviteReducer(
       return {
         ...state,
         inviteReplying: true,
+        inviteFetchingPopup: false,
       };
     case types.INVITE_REPLY_SUCCESS:
       return {
         ...state,
         inviteReplying: false,
-        inviteFetchingPopup: false,
         isListeningInvites: false,
         invite: null,
         gameToRedirect: action.payload,
@@ -72,6 +72,11 @@ function inviteReducer(
     case types.INVITE_REPLY_FAILURE:
       return {
         ...state,
+      };
+    case types.CLEAR_GAME_REDIRECTION:
+      return {
+        ...state,
+        gameToRedirect: null,
       };
     default:
       return state;

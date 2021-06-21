@@ -1,8 +1,8 @@
-//@ts-nocheck
 import React from "react";
 import { BlockTitle, Block, Button } from "framework7-react";
+import { ILoserForm } from "../../types/game.types";
 
-function LoserForm({ setCloseGamePopover, f7router }) {
+function LoserForm({ setCloseGamePopover, f7router }: ILoserForm) {
   function closeGame() {
     setCloseGamePopover(false);
     f7router.navigate("/");

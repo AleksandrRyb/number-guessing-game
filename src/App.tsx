@@ -10,9 +10,7 @@ import { params } from "./routes";
 
 function MainApp() {
   const dispatch = useActions();
-  const { isFetchingUser, user, isListening } = useTypedSelector(
-    (state) => state.user
-  );
+  const { user, isListening } = useTypedSelector((state) => state.user);
 
   React.useEffect(() => {
     return checkAuth((subscribe) => {

@@ -3,7 +3,6 @@ import { SagaIterator } from "@redux-saga/types";
 
 import { InviteActionTypes as types } from "../action-types/invite.action-types";
 import * as actionCreators from "../action-creators/invite.action-creators";
-import { InviteActions } from "../actions/invite.actions";
 import * as db from "../../firebase/api/invite.api";
 
 export function* inviteSendSaga(): SagaIterator {
@@ -21,9 +20,9 @@ export function* inviteSendSaga(): SagaIterator {
 
     if (response) {
       yield put(actionCreators.inviteSendSuccess());
-      return;
+    } else {
+      yield put(actionCreators.inviteSendFailure());
     }
-    yield put(actionCreators.inviteSendFailure());
   }
 }
 
@@ -33,10 +32,9 @@ export function* inviteReceiveSaga(): SagaIterator {
 
     if (invite) {
       yield put(actionCreators.inviteReceiveSuccess(invite));
-      return;
+    } else {
+      yield put(actionCreators.inviteReceiveFailure());
     }
-
-    yield put(actionCreators.inviteReceiveFailure());
   }
 }
 
@@ -50,9 +48,8 @@ export function* inviteReplySaga(): SagaIterator {
 
     if (response) {
       yield put(actionCreators.inviteReplySuccess(gameUrl));
-      return;
+    } else {
+      yield put(actionCreators.inviteReplyFailure());
     }
-
-    yield put(actionCreators.inviteReplyFailure());
   }
 }

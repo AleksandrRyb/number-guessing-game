@@ -34,9 +34,7 @@ function HomePage({ f7router }: any) {
   const { user, isFetchingUser, isListening } = useTypedSelector(
     (state) => state.user
   );
-  const { profile, isFetchingProfile } = useTypedSelector(
-    (state) => state.profile
-  );
+  const { profile } = useTypedSelector((state) => state.profile);
   const {
     invite,
     inviteFetchingPopup,
@@ -50,12 +48,14 @@ function HomePage({ f7router }: any) {
     if (!user && !isListening) {
       f7router.navigate("/login");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, isFetchingUser]);
 
   React.useEffect(() => {
     if (user && !profile) {
       dispatch(profileRequest(user));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   React.useEffect(() => {
@@ -68,6 +68,7 @@ function HomePage({ f7router }: any) {
     if (gameToRedirect) {
       f7router.navigate(gameToRedirect);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game, gameToRedirect]);
 
   React.useEffect(() => {
@@ -80,13 +81,16 @@ function HomePage({ f7router }: any) {
               const data = doc.data() as SnapshotInvite;
               return { id: doc.id, ...data };
             });
-            if (snapshot[0] && isListeningInvites) {
+
+            if (snapshot && isListeningInvites) {
               dispatch(inviteReceive(snapshot[snapshot.length - 1]));
             }
           }
         },
       });
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [invite, isListeningInvites, profile]);
 
   function createGameHandler() {

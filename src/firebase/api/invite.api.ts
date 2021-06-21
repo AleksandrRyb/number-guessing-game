@@ -2,7 +2,6 @@ import firebase from "firebase/app";
 import { Profile } from "../../types/profile.types";
 import { firebaseApp } from "../init";
 import { FIREBASE_COLLECTIONS } from "../collections";
-import { Invite } from "../../types/invite.types";
 
 const db = firebaseApp.firestore();
 

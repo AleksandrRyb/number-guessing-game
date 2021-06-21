@@ -1,13 +1,13 @@
-//@ts-nocheck
 import React from "react";
 import { BlockTitle, Block, Button, Input, Preloader } from "framework7-react";
+import { IMakeGuessForm } from "../../types/game.types";
 
 function MakeGuessForm({
   isGameStateUpdating,
   handleGuessingNumberChange,
   handleGuessingNumberSumbit,
   isEven,
-}) {
+}: IMakeGuessForm) {
   return (
     <>
       <BlockTitle medium className="text-align-center">
@@ -36,7 +36,7 @@ function MakeGuessForm({
         </Block>
       ) : (
         <Block className="text-align-center">
-          <Preloader colotTheme="blue" />
+          <Preloader colorTheme="blue" />
         </Block>
       )}
     </>

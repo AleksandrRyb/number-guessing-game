@@ -1,8 +1,8 @@
-//@ts-nocheck
 import React from "react";
 import { BlockTitle, Block, Button } from "framework7-react";
+import { IWinnerForm } from "../../types/game.types";
 
-function WinnerForm({ setCloseGamePopover, player, f7router }) {
+function WinnerForm({ setCloseGamePopover, player, f7router }: IWinnerForm) {
   function closeGame() {
     setCloseGamePopover(false);
     f7router.navigate("/");
@@ -11,7 +11,7 @@ function WinnerForm({ setCloseGamePopover, player, f7router }) {
   return (
     <>
       <BlockTitle medium className="text-align-center">
-        Congratulations {player.profile.name}! You are won.
+        {player?.profile.name}! You won.
       </BlockTitle>
       <Block>
         <Button

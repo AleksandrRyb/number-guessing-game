@@ -143,3 +143,9 @@ export function updatePlayersFailure(): actions.UpdatePlayersFailureAction {
     type: types.UPDATE_PLAYER_FAILURE,
   };
 }
+
+export function leaveGame(): actions.LeaveGameAction {
+  return {
+    type: types.LEAVE_GAME,
+  };
+}

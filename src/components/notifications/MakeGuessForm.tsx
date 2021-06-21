@@ -19,7 +19,7 @@ function MakeGuessForm({
         <Block>
           <Input
             onChange={handleGuessingNumberChange}
-            placeholder="1053854"
+            placeholder="Write a natural number"
             style={{ padding: "7px 0 7px 0px" }}
             className="margin-bottom"
             outline

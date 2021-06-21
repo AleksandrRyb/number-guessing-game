@@ -27,17 +27,17 @@ export function findNewNextPlayerWithMoveDecrease(
   return newNextPlayer;
 }
 
-export function findGameLiders(players: Player[]) {
+export function findGameLeaders(players: Player[]) {
   const playerWithTheBiggestScore = players.reduce(
     //@ts-ignore
     (p1, p2) => (p1.guessed > p2.guessed ? p1 : p2)
   );
 
-  const liders = players.filter(
+  const leaders = players.filter(
     (player) => player.guessed === playerWithTheBiggestScore.guessed
   );
 
-  return liders;
+  return leaders;
 }
 
 export function findTotalMovePoints(players: Player[]) {

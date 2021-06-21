@@ -17,6 +17,13 @@ export type GameSnapshot = {
   created: Date;
 };
 
+export enum GAME_STAGES {
+  CREATING = "creating",
+  IN_PROGRESS = "in-progress",
+  DONE = "done",
+  CLOSED = "closed",
+}
+
 export type PlayerSnapshot = {
   profileId: string;
   profile: Profile;

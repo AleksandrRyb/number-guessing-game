@@ -42,7 +42,7 @@ function HomePage({ f7router }: any) {
     gameToRedirect,
     isListeningInvites,
   } = useTypedSelector((state) => state.invite);
-  const { game } = useTypedSelector((state) => state.game);
+  const { game, isFetchingGame } = useTypedSelector((state) => state.game);
 
   React.useEffect(() => {
     if (!user && !isListening) {
@@ -134,6 +134,7 @@ function HomePage({ f7router }: any) {
   );
   const startGameButton = (
     <Button
+      disabled={isFetchingGame}
       onClick={createGameHandler}
       className="display-inline-block"
       fill

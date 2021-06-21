@@ -1,5 +1,12 @@
 import React from "react";
-import { Popover, Block, BlockTitle, Input, Button } from "framework7-react";
+import {
+  Popover,
+  Block,
+  BlockHeader,
+  BlockTitle,
+  Input,
+  Button,
+} from "framework7-react";
 
 import { IInviteForm } from "../../types/game.types";
 
@@ -21,6 +28,10 @@ function InviteForm({
         <BlockTitle medium className="text-align-center">
           Send Email
         </BlockTitle>
+        <BlockHeader textColor="red">
+          *User must be authorized in app to receive invite, otherwise it will
+          not working!*
+        </BlockHeader>
         <Input
           onChange={handleInviteChange}
           name="email"

@@ -1,7 +1,7 @@
 import { take, put, call } from "redux-saga/effects";
 import { SagaIterator } from "@redux-saga/types";
 import {
-  findGameLiders,
+  findGameLeaders,
   findTotalMovePoints,
 } from "../../helpers/game.helpers";
 
@@ -70,19 +70,19 @@ export function* updateGameStateSaga(): SagaIterator {
     } = yield take(types.UPDATE_GAME_STATE_REQUEST);
     const players = yield call(db.getAllPlayers, gameId);
     const totalMovePoints = findTotalMovePoints(players);
-    const liders = findGameLiders(players);
+    const leaders = findGameLeaders(players);
 
     //Check if players movepoints are 0, if so and more than 1 player
     //have a biggest count of point we set them to  continue play
     //this cond should work only once
     if (
-      liders.length > 1 &&
+      leaders.length > 1 &&
       totalMovePoints === 0 &&
       gameState.isEven === null
     ) {
       const newGameState = {
-        currentPlayer: liders[0],
-        nextPlayer: liders[1],
+        currentPlayer: leaders[0],
+        nextPlayer: leaders[1],
         isEven: null,
       };
       const response = yield call(db.updateGameState, gameId, newGameState);
@@ -95,7 +95,7 @@ export function* updateGameStateSaga(): SagaIterator {
 
       //Check if we have only one favorite player
       //If so set him as a winner
-    } else if (liders.length === 1 && totalMovePoints <= 0) {
+    } else if (leaders.length === 1 && totalMovePoints <= 0) {
       yield call(db.setWinner, players[0]?.gameId);
 
       //Otherweise we just set new gameState

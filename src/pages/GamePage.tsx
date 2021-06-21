@@ -3,7 +3,7 @@ import { useActions } from "../hooks/use-action.hooks";
 import { useTypedSelector } from "../hooks/use-typed-selector.hooks";
 import {
   findNewNextPlayerWithMoveDecrease,
-  findGameLiders,
+  findGameLeaders,
   findTotalMovePoints,
 } from "../helpers/game.helpers";
 import { inviteSend } from "../redux/action-creators/invite.action-creators";
@@ -154,7 +154,7 @@ function GamePage({ f7route, f7router }: any) {
       //Here we check if game is done
       //if so we return only the game liders for nextrGameState
       const newNextPlayer = findNewNextPlayerWithMoveDecrease(
-        totalMovePoints > 0 ? players : findGameLiders(players),
+        totalMovePoints > 0 ? players : findGameLeaders(players),
         nextPlayer,
         currentPlayer
       );

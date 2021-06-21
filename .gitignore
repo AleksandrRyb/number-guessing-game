@@ -2,6 +2,7 @@
 
 # firebase functions
 /functions/node_modules
+/.firebase
 
 # dependencies
 /node_modules

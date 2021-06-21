@@ -1,8 +1,10 @@
 import firebase from "firebase/app";
-import { firebaseApp } from "../init";
+import { firebaseApp, remoteConfig } from "../init";
 import { Profile } from "../../types/profile.types";
 import { GameState } from "../../types/game.types";
 import { FIREBASE_COLLECTIONS } from "../collections";
+import { GAME_STAGES } from "../../types/game.types";
+import { FUNCTIONS_URL } from "../functions";
 
 const db = firebaseApp.firestore();
 
@@ -11,7 +13,7 @@ export async function createGame(profile: Profile) {
     owner: profile,
     created: firebase.firestore.FieldValue.serverTimestamp(),
     winner: null,
-    stages: "creating",
+    stages: GAME_STAGES.CREATING,
     gameState: {
       currentPlayer: null,
       nextPlayer: null,
@@ -50,7 +52,7 @@ export async function addPlayerToGame(profile: Profile, gameId: string) {
       profile: profile,
       gameId,
       created: firebase.firestore.FieldValue.serverTimestamp(),
-      movePoints: 3,
+      movePoints: remoteConfig.getValue("movePoints").asNumber(),
       guessed: 0,
     });
 
@@ -84,7 +86,7 @@ export async function updateGameState(gameId: string, gameState: GameState) {
     .collection(FIREBASE_COLLECTIONS.GAMES)
     .doc(gameId)
     .update({
-      stages: "in-progress",
+      stages: GAME_STAGES.IN_PROGRESS,
       gameState: {
         ...gameState,
       },
@@ -115,9 +117,7 @@ export async function updatePlayer(
 }
 
 export async function setWinner(gameId: string) {
-  const response = await fetch(
-    `https://us-central1-number-guessing-game-644c8.cloudfunctions.net/checkWinner/${gameId}`
-  )
+  const response = await fetch(`${FUNCTIONS_URL.SET_WINNER}/${gameId}`)
     .then((res) => res)
     .catch((error) => error);
 

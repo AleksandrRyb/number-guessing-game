@@ -5,7 +5,19 @@ admin.initializeApp();
 
 const db = admin.firestore();
 
-export type Profile = {
+enum FIREBASE_COLLECTIONS {
+  GAMES = "games",
+  PLAYERS = "players",
+}
+
+enum GAME_STAGES {
+  CREATING = "creating",
+  IN_PROGRESS = "in-progress",
+  DONE = "done",
+  CLOSED = "closed",
+}
+
+type Profile = {
   id: string;
   userId: string;
   name: string;
@@ -16,7 +28,7 @@ export type Profile = {
   created: Date;
 };
 
-export type Player = {
+type Player = {
   id: string;
   profileId: string;
   profile: Profile;
@@ -26,16 +38,16 @@ export type Player = {
   guessed: number;
 };
 
-export const checkWinner = functions.https.onRequest(
+export const setWinner = functions.https.onRequest(
   async (req: any, res: any) => {
     const response = res.set("Access-Control-Allow-Origin", "*");
 
     try {
       const gameId = req.path.substring(1);
       const playersSnapshot = await db
-        .collection("games")
+        .collection(FIREBASE_COLLECTIONS.GAMES)
         .doc(gameId)
-        .collection("players")
+        .collection(FIREBASE_COLLECTIONS.PLAYERS)
         .get();
       const players = playersSnapshot.docs.map(function (doc) {
         return { id: doc.id, ...doc.data() } as Player;
@@ -53,11 +65,11 @@ export const checkWinner = functions.https.onRequest(
 
       //If we found 1, we change gameState
       const winnerRef = await db
-        .collection("games")
+        .collection(FIREBASE_COLLECTIONS.GAMES)
         .doc(winner.gameId)
         .update({
           winner: winner,
-          stages: "done",
+          stages: GAME_STAGES.DONE,
         })
         .then(() => {
           return { message: "Winner is updated" };

@@ -116,7 +116,7 @@ export async function updatePlayer(
 
 export async function setWinner(gameId: string) {
   const response = await fetch(
-    `http://localhost:5001/number-guessing-game-644c8/us-central1/checkWinner/${gameId}`
+    `https://us-central1-number-guessing-game-644c8.cloudfunctions.net/checkWinner/${gameId}`
   )
     .then((res) => res)
     .catch((error) => error);

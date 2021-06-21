@@ -150,6 +150,9 @@ function GamePage({ f7route, f7router }: any) {
         response === game?.gameState.isEven
           ? nextPlayer.guessed + 1
           : nextPlayer.guessed;
+
+      //Here we check if game is done
+      //if so we return only the game liders for nextrGameState
       const newNextPlayer = findNewNextPlayerWithMoveDecrease(
         totalMovePoints > 0 ? players : findGameLiders(players),
         nextPlayer,

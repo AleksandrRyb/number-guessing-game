@@ -144,8 +144,13 @@ export function updatePlayersFailure(): actions.UpdatePlayersFailureAction {
   };
 }
 
-export function leaveGame(): actions.LeaveGameAction {
+export function leaveGame(
+  gameId: string,
+  playerId: string,
+  profileId: string
+): actions.LeaveGameAction {
   return {
     type: types.LEAVE_GAME,
+    payload: { gameId, playerId, profileId },
   };
 }

@@ -9,6 +9,7 @@ import { GameActionTypes as types } from "../action-types/game.action-types";
 import * as actionCreators from "../action-creators/game.action-creators";
 import { clearGameRedirection } from "../action-creators/invite.action-creators";
 import * as db from "../../firebase/api/game.api";
+import { updateProfileCurrentGame } from "../../firebase/api/profile.api";
 
 export function* gameCreateSaga(): SagaIterator {
   while (true) {
@@ -29,6 +30,8 @@ export function* joinToGameSaga(): SagaIterator {
       payload: { profile, gameId },
     } = yield take(types.JOIN_TO_GAME_REQUEST);
     yield put(clearGameRedirection());
+
+    yield call(updateProfileCurrentGame, profile.id, gameId);
     const response = yield call(db.addPlayerToGame, profile, gameId);
 
     if (response) {
@@ -141,5 +144,15 @@ export function* updatePlayersSaga(): SagaIterator {
     } else {
       yield put(actionCreators.updatePlayersFailure());
     }
+  }
+}
+
+export function* leaveGameSaga() {
+  while (true) {
+    const {
+      payload: { gameId, playerId, profileId },
+    } = yield take(types.LEAVE_GAME);
+    yield call(db.deletePlayerFromGame, gameId, playerId);
+    yield call(updateProfileCurrentGame, profileId, null);
   }
 }

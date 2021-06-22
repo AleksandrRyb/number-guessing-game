@@ -14,6 +14,7 @@ import {
   subscribeToGameSaga,
   updateGameStateSaga,
   updatePlayersSaga,
+  leaveGameSaga,
 } from "./game.saga";
 
 export function* rootSaga() {
@@ -33,6 +34,7 @@ export function* rootSaga() {
       subscribeToGameSaga(),
       updateGameStateSaga(),
       updatePlayersSaga(),
+      leaveGameSaga(),
     ]);
   } catch (error) {
     console.log("→ error caught", error);

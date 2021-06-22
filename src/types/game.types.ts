@@ -64,6 +64,8 @@ export type IGuessingForm = {
 };
 
 export type IInviteForm = {
+  inviteSendSuccess: string | null;
+  inviteSendFailure: string | null;
   openInvitePopover: boolean;
   setOpenInvitePopover: (arg: boolean) => void;
   handleInviteChange: (event: React.ChangeEvent<HTMLInputElement>) => void;

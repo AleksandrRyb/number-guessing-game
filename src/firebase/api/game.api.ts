@@ -138,3 +138,12 @@ export async function getAllPlayers(gameId: string) {
 
   return players;
 }
+
+export async function deletePlayerFromGame(gameId: string, playerId: string) {
+  await db
+    .collection(FIREBASE_COLLECTIONS.GAMES)
+    .doc(gameId)
+    .collection(FIREBASE_COLLECTIONS.PLAYERS)
+    .doc(playerId)
+    .delete();
+}

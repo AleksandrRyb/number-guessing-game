@@ -28,6 +28,7 @@ export async function getProfile(user: firebase.User) {
     email: email,
     wins: 0,
     loses: 0,
+    currentGame: null,
   });
   const newProfile = {
     id: profileRef.id,
@@ -36,12 +37,28 @@ export async function getProfile(user: firebase.User) {
   return newProfile;
 }
 
-export async function updateProfile(profileId: string, isWinner: boolean) {
+export async function updateProfileScore(profileId: string, isWinner: boolean) {
   const updatedProfile = await db
     .collection(FIREBASE_COLLECTIONS.PROFILES)
     .doc(profileId)
     .update({
       [isWinner ? "wins" : "loses"]: firebase.firestore.FieldValue.increment(1),
+    })
+    .then(() => true)
+    .catch(() => false);
+
+  return updatedProfile;
+}
+
+export async function updateProfileCurrentGame(
+  profileId: string,
+  gameId: string | null
+) {
+  const updatedProfile = await db
+    .collection(FIREBASE_COLLECTIONS.PROFILES)
+    .doc(profileId)
+    .update({
+      currentGame: gameId,
     })
     .then(() => true)
     .catch(() => false);

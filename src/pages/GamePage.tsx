@@ -55,7 +55,8 @@ function GamePage({ f7route, f7router }: any) {
     isGameStateUpdating,
     isPlayerUpdating,
   } = useTypedSelector((state) => state.game);
-  const { isSendingInvite } = useTypedSelector((state) => state.invite);
+  const { isSendingInvite, inviteSendSuccess, inviteSendFailure } =
+    useTypedSelector((state) => state.invite);
   const [inviteForm, setInviteForm] = React.useState(DEFAULT_INVITE_FORM);
   const [openInvitePopover, setOpenInvitePopover] = React.useState(false);
   const [closeGamePopover, setCloseGamePopover] = React.useState(true);
@@ -78,22 +79,6 @@ function GamePage({ f7route, f7router }: any) {
   }, [profile]);
 
   React.useEffect(() => {
-    if (profile) {
-      if (
-        players.length === 0 ||
-        !players.some((player) => player.profile.id === profile.id)
-      ) {
-        dispatch(joinToGameRequest(profile, f7route.params.gameId));
-      }
-    }
-
-    return () => {
-      dispatch(leaveGame());
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [closeGamePopover]);
-
-  React.useEffect(() => {
     if (profile && isPlayersListening && !isJoiningGame) {
       db.subscribeToPlayers(f7route.params.gameId, {
         next: (querySnapshot) => {
@@ -102,14 +87,26 @@ function GamePage({ f7route, f7router }: any) {
             return { id: doc.id, ...data };
           });
 
-          if (players && !isJoiningGame) {
-            dispatch(subscribeToPlayersRequest(players));
-          }
+          dispatch(subscribeToPlayersRequest(players));
         },
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile]);
+  }, [profile, isJoiningGame]);
+
+  function handlePageBeforeUnmount() {
+    const player = players.find((player) => player.profileId === profile?.id);
+
+    if (player && profile) {
+      dispatch(leaveGame(f7route.params.gameId, player.id, profile.id));
+    }
+  }
+
+  function handlePageBeforeIn() {
+    if (profile) {
+      dispatch(joinToGameRequest(profile, f7route.params.gameId));
+    }
+  }
 
   function handleInviteChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
@@ -118,8 +115,10 @@ function GamePage({ f7route, f7router }: any) {
 
   function handleInviteSubmit() {
     const { email, message } = inviteForm;
-    if (email.length && message.length && profile && profile.email !== email) {
-      dispatch(inviteSend(profile, email, f7route.url, message));
+    if (email.length && profile && profile.email !== email) {
+      dispatch(
+        inviteSend(profile, profile.id, email, f7route.params.gameId, message)
+      );
       setInviteForm(DEFAULT_INVITE_FORM);
     }
   }
@@ -212,7 +211,11 @@ function GamePage({ f7route, f7router }: any) {
     renderLoserForm;
 
   return (
-    <Page className="game">
+    <Page
+      onPageBeforeOut={handlePageBeforeUnmount}
+      onPageInit={handlePageBeforeIn}
+      className="game"
+    >
       <Navbar>
         <NavRight className="padding-right">
           {game?.stages === "creating" && (
@@ -285,6 +288,8 @@ function GamePage({ f7route, f7router }: any) {
       </Popover>
       {
         <InviteForm
+          inviteSendSuccess={inviteSendSuccess}
+          inviteSendFailure={inviteSendFailure}
           openInvitePopover={openInvitePopover}
           setOpenInvitePopover={setOpenInvitePopover}
           handleInviteChange={handleInviteChange}

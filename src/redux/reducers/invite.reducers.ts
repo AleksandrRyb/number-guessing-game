@@ -4,7 +4,8 @@ import { Invite } from "../../types/invite.types";
 
 interface InviteState {
   isSendingInvite: boolean;
-  inviteFetchingPopup: boolean;
+  inviteSendSuccess: string | null;
+  inviteSendFailure: string | null;
   isListeningInvites: boolean;
   inviteReplying: boolean;
   invite: Invite | null;
@@ -13,7 +14,8 @@ interface InviteState {
 
 const initialState: InviteState = {
   isSendingInvite: false,
-  inviteFetchingPopup: false,
+  inviteSendSuccess: null,
+  inviteSendFailure: null,
   isListeningInvites: true,
   inviteReplying: false,
   invite: null,
@@ -29,49 +31,61 @@ function inviteReducer(
       return {
         ...state,
         isSendingInvite: true,
+        inviteSendSuccess: null,
+        inviteSendFailure: null,
       };
     case types.INVITE_SEND_SUCCESS:
       return {
         ...state,
         isSendingInvite: false,
+        inviteSendSuccess: action.payload,
       };
     case types.INVITE_SEND_FAILURE:
       return {
         ...state,
         isSendingInvite: false,
+        inviteSendFailure: action.payload,
+      };
+    case types.SET_DEFAULT_INVITE_SENDING:
+      return {
+        ...state,
+        inviteSendSuccess: null,
+        inviteSendFailure: null,
       };
     case types.INVITE_RECIEVE:
       return {
         ...state,
-        isListeningInvites: false,
       };
     case types.INVITE_RECIEVE_SUCCESS:
       return {
         ...state,
         invite: action.payload,
-        inviteFetchingPopup: true,
+        isListeningInvites: false,
       };
     case types.INVITE_RECIEVE_FAILURE:
       return {
         ...state,
+        isListeningInvites: true,
       };
     case types.INVITE_REPLY:
       return {
         ...state,
         inviteReplying: true,
-        inviteFetchingPopup: false,
       };
     case types.INVITE_REPLY_SUCCESS:
       return {
         ...state,
         inviteReplying: false,
-        isListeningInvites: false,
+        isListeningInvites: true,
         invite: null,
         gameToRedirect: action.payload,
       };
     case types.INVITE_REPLY_FAILURE:
       return {
         ...state,
+        isListeningInvites: true,
+        invite: null,
+        gameToRedirect: null,
       };
     case types.CLEAR_GAME_REDIRECTION:
       return {

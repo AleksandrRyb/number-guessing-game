@@ -88,6 +88,7 @@ export interface UpdatePlayersFailureAction {
 
 export interface LeaveGameAction {
   type: types.LEAVE_GAME;
+  payload: { gameId: string; playerId: string; profileId: string };
 }
 
 export type GameActions =

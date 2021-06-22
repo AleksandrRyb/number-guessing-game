@@ -5,25 +5,38 @@ import { Profile } from "../../types/profile.types";
 
 export function inviteSend(
   sendFrom: Profile,
+  sendFromId: string,
   sendTo: string,
-  gameUrl: string,
+  gameId: string,
   message: string
 ): actions.InviteSendAction {
   return {
     type: types.INVITE_SEND,
-    payload: { sendFrom, sendTo, gameUrl, message },
+    payload: { sendFrom, sendFromId, sendTo, gameId, message },
   };
 }
 
-export function inviteSendSuccess(): actions.InviteSendSuccessAction {
+export function inviteSendSuccess(
+  message: string
+): actions.InviteSendSuccessAction {
   return {
     type: types.INVITE_SEND_SUCCESS,
+    payload: message,
   };
 }
 
-export function inviteSendFailure(): actions.InviteSendFailureAction {
+export function inviteSendFailure(
+  error: string
+): actions.InviteSendFailureAction {
   return {
     type: types.INVITE_SEND_FAILURE,
+    payload: error,
+  };
+}
+
+export function setDefaultInviteSending(): actions.SetDefaultInviteSendingAction {
+  return {
+    type: types.SET_DEFAULT_INVITE_SENDING,
   };
 }
 
@@ -52,20 +65,20 @@ export function inviteReceiveFailure(): actions.InviteReceiveFailureAction {
 export function inviteReply(
   inviteId: string,
   joined: boolean,
-  gameUrl: string | null
+  gameId: string | null
 ): actions.InviteReplyAction {
   return {
     type: types.INVITE_REPLY,
-    payload: { inviteId, joined, gameUrl },
+    payload: { inviteId, joined, gameId },
   };
 }
 
 export function inviteReplySuccess(
-  gameUrl: string
+  gameId: string
 ): actions.InviteReplySuccessAction {
   return {
     type: types.INVITE_REPLY_SUCCESS,
-    payload: gameUrl,
+    payload: gameId,
   };
 }
 

@@ -6,18 +6,21 @@ export interface InviteSendAction {
   type: types.INVITE_SEND;
   payload: {
     sendFrom: Profile;
+    sendFromId: string;
     sendTo: string;
-    gameUrl: string;
+    gameId: string;
     message: string;
   };
 }
 
 export interface InviteSendSuccessAction {
   type: types.INVITE_SEND_SUCCESS;
+  payload: string;
 }
 
 export interface InviteSendFailureAction {
   type: types.INVITE_SEND_FAILURE;
+  payload: string;
 }
 
 export interface InviteReceiveAction {
@@ -36,7 +39,7 @@ export interface InviteReceiveFailureAction {
 
 export interface InviteReplyAction {
   type: types.INVITE_REPLY;
-  payload: { inviteId: string; joined: boolean; gameUrl: string | null };
+  payload: { inviteId: string; joined: boolean; gameId: string | null };
 }
 
 export interface InviteReplySuccessAction {
@@ -52,6 +55,10 @@ export interface ClearGameRedirectionAction {
   type: types.CLEAR_GAME_REDIRECTION;
 }
 
+export interface SetDefaultInviteSendingAction {
+  type: types.SET_DEFAULT_INVITE_SENDING;
+}
+
 export type InviteActions =
   | InviteSendAction
   | InviteSendSuccessAction
@@ -62,4 +69,5 @@ export type InviteActions =
   | InviteReplyAction
   | InviteReplySuccessAction
   | InviteReplyFailureAction
-  | ClearGameRedirectionAction;
+  | ClearGameRedirectionAction
+  | SetDefaultInviteSendingAction;

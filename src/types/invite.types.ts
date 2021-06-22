@@ -3,8 +3,9 @@ import { Profile } from "./profile.types";
 export type Invite = {
   id: string;
   sendFrom: Profile;
+  sendFromId: string;
   sendTo: string;
-  gameUrl: string;
+  gameId: string;
   message: string;
   joined: boolean;
   isReceived: boolean;
@@ -13,8 +14,9 @@ export type Invite = {
 
 export type SnapshotInvite = {
   sendFrom: Profile;
+  sendFromId: string;
   sendTo: string;
-  gameUrl: string;
+  gameId: string;
   message: string;
   joined: boolean;
   isReceived: boolean;

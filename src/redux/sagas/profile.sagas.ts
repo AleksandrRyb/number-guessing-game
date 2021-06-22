@@ -24,7 +24,7 @@ export function* updateProfileSaga(): SagaIterator {
     const {
       payload: { profileId, isWinner },
     } = yield take<ProfileActions>(types.UPDATE_PROFILE);
-    const updated = yield call(db.updateProfile, profileId, isWinner);
+    const updated = yield call(db.updateProfileScore, profileId, isWinner);
 
     if (updated) {
       yield put(actionCreators.updateProfileSuccess());

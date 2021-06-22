@@ -3,14 +3,20 @@ import {
   Popover,
   Block,
   BlockHeader,
+  BlockFooter,
   BlockTitle,
   Input,
   Button,
 } from "framework7-react";
 
+import { setDefaultInviteSending } from "../../redux/action-creators/invite.action-creators";
+import { useActions } from "../../hooks/use-action.hooks";
+
 import { IInviteForm } from "../../types/game.types";
 
 function InviteForm({
+  inviteSendSuccess,
+  inviteSendFailure,
   openInvitePopover,
   setOpenInvitePopover,
   handleInviteChange,
@@ -18,6 +24,19 @@ function InviteForm({
   handleInviteSubmit,
   isSendingInvite,
 }: IInviteForm) {
+  const dispatch = useActions();
+  const notificationsColor = inviteSendSuccess ? "green" : "red";
+
+  React.useEffect(() => {
+    if (inviteSendSuccess) {
+      setTimeout(() => {
+        setOpenInvitePopover(false);
+        dispatch(setDefaultInviteSending());
+      }, 2000);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inviteSendSuccess]);
+
   return (
     <Popover
       closeByOutsideClick={false}
@@ -52,9 +71,19 @@ function InviteForm({
           outline
           type="text"
         />
+        <BlockFooter
+          className="margin-bottom text-align-center"
+          style={{ minHeight: "20px" }}
+          textColor={notificationsColor}
+        >
+          {inviteSendSuccess || inviteSendFailure || null}
+        </BlockFooter>
         <div className="display-flex justify-content-space-around align-items-center">
           <Button
-            onClick={() => setOpenInvitePopover(false)}
+            onClick={() => {
+              setOpenInvitePopover(false);
+              dispatch(setDefaultInviteSending());
+            }}
             colorTheme="blue"
             fillMd
             text="Cancel"

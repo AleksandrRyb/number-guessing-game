@@ -30,18 +30,15 @@ import {
 } from "framework7-react";
 
 function HomePage({ f7router }: any) {
+  const [invitesRecievePopover, setInvitesReceivePopover] =
+    React.useState(false);
   const dispatch = useActions();
   const { user, isFetchingUser, isListening } = useTypedSelector(
     (state) => state.user
   );
   const { profile } = useTypedSelector((state) => state.profile);
-  const {
-    invite,
-    inviteFetchingPopup,
-    inviteReplying,
-    gameToRedirect,
-    isListeningInvites,
-  } = useTypedSelector((state) => state.invite);
+  const { invite, inviteReplying, gameToRedirect, isListeningInvites } =
+    useTypedSelector((state) => state.invite);
   const { game, isFetchingGame } = useTypedSelector((state) => state.game);
 
   React.useEffect(() => {
@@ -66,7 +63,7 @@ function HomePage({ f7router }: any) {
 
     //Redirect to game when you join it.
     if (gameToRedirect) {
-      f7router.navigate(gameToRedirect);
+      f7router.navigate(`/game/${gameToRedirect}`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game, gameToRedirect]);
@@ -74,16 +71,16 @@ function HomePage({ f7router }: any) {
   React.useEffect(() => {
     //Listening for new messages, and get the newest one
     if (profile) {
-      subscribeToInvites(profile, {
+      return subscribeToInvites(profile, {
         next: (querySnapshot) => {
           if (!inviteReplying) {
-            const snapshot = querySnapshot.docs.map((doc) => {
+            const inviteData = querySnapshot.docs.map((doc) => {
               const data = doc.data() as SnapshotInvite;
               return { id: doc.id, ...data };
             });
 
-            if (snapshot && isListeningInvites) {
-              dispatch(inviteReceive(snapshot[snapshot.length - 1]));
+            if (inviteData) {
+              dispatch(inviteReceive(inviteData[inviteData.length - 1]));
             }
           }
         },
@@ -91,15 +88,19 @@ function HomePage({ f7router }: any) {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [invite, isListeningInvites, profile]);
+  }, [isListeningInvites, profile, inviteReplying]);
 
   function createGameHandler() {
-    profile && dispatch(createGameRequest(profile));
+    if (profile) {
+      dispatch(createGameRequest(profile));
+    }
   }
 
-  async function replyInviteHandler(joined: boolean) {
-    invite &&
-      dispatch(inviteReply(invite.id, joined, joined ? invite?.gameUrl : null));
+  function replyInviteHandler(joined: boolean) {
+    if (invite) {
+      dispatch(inviteReply(invite.id, joined, joined ? invite?.gameId : null));
+      setInvitesReceivePopover(false);
+    }
   }
 
   const noUserTitle = (
@@ -167,7 +168,7 @@ function HomePage({ f7router }: any) {
     <Popover
       closeByOutsideClick={false}
       closeByBackdropClick={false}
-      opened={inviteFetchingPopup}
+      opened={invite && f7router.url === "/" ? true : false}
     >
       <Block>
         <BlockTitle medium className="text-align-center">

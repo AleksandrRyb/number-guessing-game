@@ -1,32 +1,34 @@
 import React from "react";
+import { IPlayer } from "../types/game.types";
 
-import {
-  ListItem,
-  Card,
-  CardHeader,
-  CardContent,
-  CardFooter,
-} from "framework7-react";
+import { Card, CardHeader, CardContent, CardFooter } from "framework7-react";
 
-function Player({ player }: any) {
+function Player({ player, currentPlayerId, nextPlayerId }: IPlayer) {
+  const currentPlayerBorder = currentPlayerId === player.id && {
+    border: "2px solid red",
+  };
+  const nextPlayerBorder = nextPlayerId === player.id && {
+    border: "2px solid blue",
+  };
+  const borderStyle = currentPlayerBorder || nextPlayerBorder || { border: "" };
+
   return (
-    <ListItem className="display-block">
-      <Card style={{ width: "100%" }}>
-        <CardHeader>
-          <div style={{ margin: "0 auto" }}>{player.username}</div>
-        </CardHeader>
-        <CardContent>
-          <img
-            className="player-avatar"
-            src={player.avatar}
-            alt={`number guessing game player: ${player.username}`}
-          />
-        </CardContent>
-        <CardFooter>
-          <div style={{ margin: "0 auto" }}>guessed: {player.score}</div>
-        </CardFooter>
-      </Card>
-    </ListItem>
+    <Card className="display-block" style={{ minWidth: "200px" }}>
+      <CardHeader>
+        <div style={{ margin: "0 auto" }}>{player.profile.name}</div>
+      </CardHeader>
+      <CardContent>
+        <img
+          style={borderStyle}
+          className="player-avatar"
+          src={player.profile.avatar}
+          alt={`number guessing game player: ${player.profile.name}`}
+        />
+      </CardContent>
+      <CardFooter>
+        <div style={{ margin: "0 auto" }}>guessed: {player.guessed}</div>
+      </CardFooter>
+    </Card>
   );
 }
 

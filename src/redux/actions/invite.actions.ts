@@ -48,6 +48,10 @@ export interface InviteReplyFailureAction {
   type: types.INVITE_REPLY_FAILURE;
 }
 
+export interface ClearGameRedirectionAction {
+  type: types.CLEAR_GAME_REDIRECTION;
+}
+
 export type InviteActions =
   | InviteSendAction
   | InviteSendSuccessAction
@@ -57,4 +61,5 @@ export type InviteActions =
   | InviteReceiveFailureAction
   | InviteReplyAction
   | InviteReplySuccessAction
-  | InviteReplyFailureAction;
+  | InviteReplyFailureAction
+  | ClearGameRedirectionAction;

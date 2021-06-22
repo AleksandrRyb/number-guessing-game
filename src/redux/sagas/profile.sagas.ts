@@ -13,10 +13,9 @@ export function* getProfileSaga(): SagaIterator {
 
     if (profile) {
       yield put(actionCreators.profileRequestSuccess(profile));
-      return;
+    } else {
+      yield put(actionCreators.profileRequestFailure(profile));
     }
-
-    yield put(actionCreators.profileRequestFailure(profile));
   }
 }
 
@@ -29,9 +28,8 @@ export function* updateProfileSaga(): SagaIterator {
 
     if (updated) {
       yield put(actionCreators.updateProfileSuccess());
-      return;
+    } else {
+      yield put(actionCreators.updateProfileFailure());
     }
-
-    yield put(actionCreators.updateProfileFailure());
   }
 }

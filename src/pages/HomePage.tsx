@@ -34,9 +34,7 @@ function HomePage({ f7router }: any) {
   const { user, isFetchingUser, isListening } = useTypedSelector(
     (state) => state.user
   );
-  const { profile, isFetchingProfile } = useTypedSelector(
-    (state) => state.profile
-  );
+  const { profile } = useTypedSelector((state) => state.profile);
   const {
     invite,
     inviteFetchingPopup,
@@ -44,31 +42,34 @@ function HomePage({ f7router }: any) {
     gameToRedirect,
     isListeningInvites,
   } = useTypedSelector((state) => state.invite);
-  const { gameId } = useTypedSelector((state) => state.game);
+  const { game, isFetchingGame } = useTypedSelector((state) => state.game);
 
   React.useEffect(() => {
     if (!user && !isListening) {
       f7router.navigate("/login");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, isFetchingUser]);
 
   React.useEffect(() => {
     if (user && !profile) {
       dispatch(profileRequest(user));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   React.useEffect(() => {
     //Reditect to game when you create it.
-    if (gameId) {
-      f7router.navigate(`/game/${gameId}`);
+    if (game) {
+      f7router.navigate(`/game/${game.id}`);
     }
 
     //Redirect to game when you join it.
     if (gameToRedirect) {
       f7router.navigate(gameToRedirect);
     }
-  }, [gameId, gameToRedirect]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [game, gameToRedirect]);
 
   React.useEffect(() => {
     //Listening for new messages, and get the newest one
@@ -80,13 +81,16 @@ function HomePage({ f7router }: any) {
               const data = doc.data() as SnapshotInvite;
               return { id: doc.id, ...data };
             });
-            if (snapshot[0] && isListeningInvites) {
+
+            if (snapshot && isListeningInvites) {
               dispatch(inviteReceive(snapshot[snapshot.length - 1]));
             }
           }
         },
       });
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [invite, isListeningInvites, profile]);
 
   function createGameHandler() {
@@ -130,6 +134,7 @@ function HomePage({ f7router }: any) {
   );
   const startGameButton = (
     <Button
+      disabled={isFetchingGame}
       onClick={createGameHandler}
       className="display-inline-block"
       fill

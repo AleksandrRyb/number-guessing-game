@@ -1,4 +1,5 @@
 import firebase from "firebase/app";
+import "firebase/firebase-remote-config";
 import "firebase/auth";
 import "firebase/firestore";
 import "firebase/storage";
@@ -15,3 +16,9 @@ const firebaseConfig = {
 export const firebaseApp = !firebase.apps.length
   ? firebase.initializeApp(firebaseConfig)
   : firebase.app();
+
+export const remoteConfig = firebaseApp.remoteConfig();
+
+remoteConfig.defaultConfig = {
+  movePoints: 3,
+};

@@ -1,46 +1,29 @@
-# Getting Started with Create React App
+# Number guessing game
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Правила игры.
 
-## Available Scripts
+Один игрок загадывает число другому и второй должен отгадать четное это число или нет. Изначально всем дается 3 хода. Если по истечению всех ходов победитель не будет выявлен, то игра продолжится между лидирующими игроками.
+Пока один из них не даст правильный ответ.
 
-In the project directory, you can run:
+## Как начать играть.
 
-### `npm start`
+Пройдя авторизацию google вы попадете на домашнюю страницу. На ней у вас будет возможность создать новую игру и сделать logout. При создании новой игры у вас автоматически сработает редирект на страницу игры, откуда вы уже сможете пригласить пользователей по email и написать ему сопроводительное сообщение. После того как в игру зашло не менее двух человек вы можете начать игру нажав кнопку GameStart, которая появится возле кнопки Invite в правой стороне Navbar.
+Далее все идет по выше указаным правилам до самого конца. После вы получите сообщение о победе или поражении которое отправит вас на домашнюю страницу.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+**Теперь по шагам**
+1.Логинимся
+2.Создаем игру(Кнопка по центру)
+3.На странице с игрой жвем Invite(Можно инвайтить только пользователя который сейчас авторизован в приложении и находится в нем. Иначе сообщение ему не придет. Emailing не подключен)
+4.После того как на странице игры появилось хотябы 2 человека появляется кнопка Start Game(Справа от кнопки Invite) Жмем
+5.Игра началась и мы по очереди загадываем числа. У каждого по 3 хода.Если по окончанию у игроков будет одинаково колличество очков то игра продолжается. До первого угаданного числа
+6.Приходит сообщение о победе. Жмем и редиректимся на домашнюю страницу.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Работа локально
 
-### `npm test`
+**npm start** Запускает приложение локально
+**npm run functions-local** Запускает локально firebase функции.
+**npm run deploy** Делает одновременно build приложения и запускает firebase deploy. **Убедитесь что перед запуском у вас установлен firebase CLI**
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Примечание
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+Сейчас на домашней странице есть статический список игр. В планах сделать список игр в которых ты принимаешь участие.

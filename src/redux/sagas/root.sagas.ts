@@ -7,7 +7,14 @@ import {
   inviteReceiveSaga,
   inviteReplySaga,
 } from "./invite.sagas";
-import { gameCreateSaga, joinToGameSaga } from "./game.saga";
+import {
+  gameCreateSaga,
+  joinToGameSaga,
+  subscribeToPlayersSaga,
+  subscribeToGameSaga,
+  updateGameStateSaga,
+  updatePlayersSaga,
+} from "./game.saga";
 
 export function* rootSaga() {
   try {
@@ -22,6 +29,10 @@ export function* rootSaga() {
       inviteSendSaga(),
       inviteReceiveSaga(),
       inviteReplySaga(),
+      subscribeToPlayersSaga(),
+      subscribeToGameSaga(),
+      updateGameStateSaga(),
+      updatePlayersSaga(),
     ]);
   } catch (error) {
     console.log("→ error caught", error);

@@ -14,9 +14,9 @@ export function* userLoginSaga(): SagaIterator {
     if (data.user) {
       yield put(actionCreators.setUser(data.user));
       yield put(actionCreators.userLoginSuccess());
-      return;
+    } else {
+      yield put(actionCreators.userLoginFailure());
     }
-    yield put(actionCreators.userLoginFailure());
   }
 }
 
@@ -26,10 +26,9 @@ export function* userListeningSaga(): SagaIterator {
     if (action.payload) {
       yield put(actionCreators.setUser(action.payload));
       yield put(actionCreators.userListeningSuccess());
-      return;
+    } else {
+      yield put(actionCreators.userListeningFailure());
     }
-
-    yield put(actionCreators.userListeningFailure());
   }
 }
 

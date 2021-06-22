@@ -3,5 +3,5 @@ export enum FIREBASE_COLLECTIONS {
   PROFILES = "profiles",
   GAMES = "games",
   PLAYERS = "players",
-  ORDER = "order",
+  GAME_STATE = "gameState",
 }
